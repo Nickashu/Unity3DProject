@@ -5,7 +5,9 @@ public class BulletController : MonoBehaviour {
 
     public GameObject bulletObj;
     public float maxBulletVelocity;
-    public float[] bulletVelocity;
+
+    [SerializeField]
+    private float bulletVelocity;
 
     private static BulletController instance;
 
@@ -19,8 +21,15 @@ public class BulletController : MonoBehaviour {
     public Dictionary<int, float> shotCoolDownGuns = new Dictionary<int, float>() {    //Este dicionário guardará o tempo de cool down entre os tiros de cada tipo de arma
         {(int)typesOfGuns.pistol, 1f },
         {(int)typesOfGuns.shotgun, 2f },
-        {(int)typesOfGuns.submachine, 0.3f },
+        {(int)typesOfGuns.submachine, 0.2f },
         {(int)typesOfGuns.magnum, 1.5f }
+    };
+
+    public Dictionary<int, float> baseDamageGuns = new Dictionary<int, float>() {    //Este dicionário guardará o tempo de cool down entre os tiros de cada tipo de arma
+        {(int)typesOfGuns.pistol, 1f },
+        {(int)typesOfGuns.shotgun, 5f },
+        {(int)typesOfGuns.submachine, 0.3f },
+        {(int)typesOfGuns.magnum, 3f }
     };
 
     public static BulletController GetInstance() {
@@ -37,7 +46,7 @@ public class BulletController : MonoBehaviour {
 
     public void spawnBullet(Vector3 position, int typeOfGun, Quaternion rotation) {
         GameObject bullet = Instantiate(bulletObj, position, rotation);
-        bullet.GetComponent<Bullet>().velocity = bulletVelocity[typeOfGun];
+        bullet.GetComponent<Bullet>().velocity = bulletVelocity;
         bullet.SetActive(true);
     }
 }

@@ -2,6 +2,7 @@ using UnityEngine;
 
 public class Bullet : MonoBehaviour {
     private Rigidbody rb;
+    private bool collided = false;
     [HideInInspector]
     public float velocity;
 
@@ -9,14 +10,25 @@ public class Bullet : MonoBehaviour {
         rb = GetComponent<Rigidbody>();
         Invoke("DestroyBullet", 2f);
     }
-    private void Update() {
-        Debug.Log(transform.rotation.x + " " + transform.rotation.y + " " + transform.rotation.z);
-        if(rb.velocity.magnitude < BulletController.GetInstance().maxBulletVelocity) {
-            rb.AddForce(Vector3.forward * velocity);
+
+    private void FixedUpdate() {
+        if (!collided) {
+            if (rb.velocity.magnitude < BulletController.GetInstance().maxBulletVelocity) {
+                Vector3 moveDirection = (transform.rotation * Vector3.forward).normalized;
+                rb.AddForce(moveDirection * velocity, ForceMode.VelocityChange);
+            }
         }
     }
 
     private void DestroyBullet() {
         Destroy(gameObject);
+    }
+
+    private void OnCollisionEnter(Collision collision) {
+        if(collision != null) {   //Se colidir com qualquer coisa
+            collided = true;
+            Debug.Log("colidiu!");
+            Destroy(gameObject);
+        }
     }
 }

@@ -10,7 +10,7 @@ public class Player : MonoBehaviour {
     private int selectedGun=0;
     private Rigidbody rb;
     [SerializeField] 
-    private float jumpPower, movementSpeed, jumpSmoothness, turnSmoothTime, originalMovementSpeed;
+    private float jumpPower, movementSpeed, jumpSmoothness, turnSmoothTime, originalMovementSpeed, maxMovementVelocity;
 
     public Transform groundCheck, cam, bulletHole;
     public LayerMask groundLayer;
@@ -20,6 +20,29 @@ public class Player : MonoBehaviour {
         originalMovementSpeed = movementSpeed;
     }
 
+    private void Update() {
+        if (Input.GetKeyDown(KeyCode.R)) {    //Para trocar de arma
+            if (selectedGun == BulletController.GetInstance().shotCoolDownGuns.Count - 1)
+                selectedGun = 0;
+            else
+                selectedGun++;
+            canShoot = true;
+            updateSelectedGun();
+        }
+
+        if (Input.GetKey(KeyCode.Mouse0)) {
+            if (canShoot) {
+                canShoot = false;
+                StartCoroutine(shoot());
+            }
+        }
+
+        if (Input.GetKey(KeyCode.LeftShift))
+            movementSpeed = originalMovementSpeed * 1.5f;
+        else
+            movementSpeed = originalMovementSpeed;
+    }
+
     private void FixedUpdate() {
         if (!GameController.GetInstance().gamePaused) {
             Vector3 direction = new Vector3(horizontal, 0f, vertical).normalized;
@@ -27,8 +50,10 @@ public class Player : MonoBehaviour {
                 float targetAngle = Mathf.Atan2(direction.x, direction.z) * Mathf.Rad2Deg + cam.eulerAngles.y;   //Pegando o ângulo da movimentação em graus (levando em consideração a câmera)
                 float angle = Mathf.SmoothDampAngle(transform.eulerAngles.y, targetAngle, ref turnSmoothVelocity, turnSmoothTime);    //Fazendo a rotação acontecer de forma suave
                 transform.rotation = Quaternion.Euler(0f, angle, 0f);
-                Vector3 moveDirection = (Quaternion.Euler(0f, angle, 0f) * Vector3.forward).normalized;
-                rb.AddForce(moveDirection * movementSpeed);    //Para usar o AddForce, lembrar de adicionar um drag no inspetor para limitar a velocidade!!!!
+                if(rb.velocity.magnitude < maxMovementVelocity) {
+                    Vector3 moveDirection = (Quaternion.Euler(0f, angle, 0f) * Vector3.forward).normalized;
+                    rb.AddForce(moveDirection * movementSpeed);    //Para usar o AddForce, lembrar de adicionar um drag no inspetor para limitar a velocidade!!!!
+                }
                 //characterController.Move(moveDirection * movementSpeed * Time.deltaTime);   //Usando o characterController para mover o personagem de acordo com a posição da câmera
                 //rb.velocity = new Vector3(moveDirection.x * movementSpeed, moveDirection.y, moveDirection.x * movementSpeed);
                 //transform.Translate(moveDirection * movementSpeed * Time.deltaTime);
@@ -40,26 +65,6 @@ public class Player : MonoBehaviour {
                 rb.velocity = new Vector3(xVelocity, rb.velocity.y, zVelocity);
             }
 
-            if (Input.GetKey(KeyCode.LeftShift))
-                movementSpeed = originalMovementSpeed * 1.5f;
-            else
-                movementSpeed = originalMovementSpeed;
-
-            if (Input.GetKeyDown(KeyCode.R)) {    //Para trocar de arma
-                if (selectedGun == BulletController.GetInstance().shotCoolDownGuns.Count - 1)
-                    selectedGun = 0;
-                else
-                    selectedGun++;
-                canShoot = true;
-                updateSelectedGun();
-            }
-
-            if (Input.GetKey(KeyCode.Mouse0)) {
-                if (canShoot) {
-                    canShoot = false;
-                    StartCoroutine(shoot());
-                }
-            }
         }
     }
 
