@@ -47,6 +47,7 @@ public class BulletController : MonoBehaviour {
     public void spawnBullet(Vector3 position, int typeOfGun, Quaternion rotation) {
         GameObject bullet = Instantiate(bulletObj, position, rotation);
         bullet.GetComponent<Bullet>().velocity = bulletVelocity;
+        bullet.GetComponent<Bullet>().damage = baseDamageGuns[typeOfGun];
         bullet.SetActive(true);
     }
 }
