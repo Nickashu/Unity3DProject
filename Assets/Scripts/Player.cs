@@ -6,12 +6,13 @@ using UnityEngine.InputSystem;
 public class Player : MonoBehaviour {
 
     private float vertical, horizontal, turnSmoothVelocity;
-    private bool canShoot = true;
+    private bool canShoot = true, aiming = false, enableAiming = true;
     private int selectedGun=0;
     private Rigidbody rb;
     [SerializeField] 
     private float jumpPower, movementSpeed, jumpSmoothness, turnSmoothTime, originalMovementSpeed, maxMovementVelocity;
 
+    public bool showAiming = false;
     public Transform groundCheck, cam, bulletHole;
     public LayerMask groundLayer;
 
@@ -21,6 +22,23 @@ public class Player : MonoBehaviour {
     }
 
     private void Update() {
+        aiming = Input.GetKey(KeyCode.Mouse1);
+        if (aiming)
+            movementSpeed = originalMovementSpeed * 0.7f;
+        else {   //Só poderá correr se não estiver mirando
+            if (Input.GetKey(KeyCode.LeftShift))
+                movementSpeed = originalMovementSpeed * 1.5f;
+            else
+                movementSpeed = originalMovementSpeed;
+        }
+
+        if (aiming && enableAiming)
+            showAiming = true;
+        else
+            showAiming = false;
+
+
+        //Detecções de botões:
         if (Input.GetKeyDown(KeyCode.R)) {    //Para trocar de arma
             if (selectedGun == BulletController.GetInstance().shotCoolDownGuns.Count - 1)
                 selectedGun = 0;
@@ -33,14 +51,10 @@ public class Player : MonoBehaviour {
         if (Input.GetKey(KeyCode.Mouse0)) {
             if (canShoot) {
                 canShoot = false;
+                enableAiming = false;
                 StartCoroutine(shoot());
             }
         }
-
-        if (Input.GetKey(KeyCode.LeftShift))
-            movementSpeed = originalMovementSpeed * 1.5f;
-        else
-            movementSpeed = originalMovementSpeed;
     }
 
     private void FixedUpdate() {
@@ -105,7 +119,9 @@ public class Player : MonoBehaviour {
 
     private IEnumerator shoot() {
         BulletController.GetInstance().spawnBullet(bulletHole.transform.position, selectedGun, transform.rotation);
-        yield return new WaitForSeconds(BulletController.GetInstance().shotCoolDownGuns[selectedGun]);
+        yield return new WaitForSeconds(BulletController.GetInstance().shotCoolDownGuns[selectedGun] * 0.5f);  //Espera metade do tempo de cool down para liberar a mira novamente
+        enableAiming = true;
+        yield return new WaitForSeconds(BulletController.GetInstance().shotCoolDownGuns[selectedGun] * 0.5f);
         canShoot = true;
     }
 }

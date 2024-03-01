@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Scenario
   - bullet
+  - enemy
   layers:
   - Default
   - TransparentFX

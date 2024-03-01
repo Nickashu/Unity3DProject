@@ -10,6 +10,10 @@ public class GameController : MonoBehaviour {
         return instance;
     }
 
+    private void Start() {
+        //Cursor.visible = false;   debug
+    }
+
     private void Awake() {
         if (instance == null)
             instance = this;

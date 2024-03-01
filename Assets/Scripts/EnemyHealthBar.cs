@@ -6,6 +6,8 @@ public class EnemyHealthBar : MonoBehaviour {
     private bool barIsLerping = false;
     private RectTransform rectTransform, bgRectTransform;
 
+    public GameObject enemy;
+    
     private void Start() {
         maxSize = transform.parent.GetComponent<RectTransform>().sizeDelta.x;
         newBarSize = maxSize;
@@ -18,7 +20,7 @@ public class EnemyHealthBar : MonoBehaviour {
         bgRectTransform.rotation = new Quaternion(bgRectTransform.rotation.x, Camera.main.transform.rotation.y, bgRectTransform.rotation.z, Camera.main.transform.rotation.w);
     }
 
-    public void updateHealth(float currentHealth, float maxHealth, float damage) {
+    public void updateHealth(float currentHealth, float maxHealth, float damage, bool enemyDead=false) {
         if (barIsLerping) {   //Se a vida estiver diminuindo quando o próximo tiro acertar
             StopAllCoroutines();
             barIsLerping = false;
@@ -28,13 +30,12 @@ public class EnemyHealthBar : MonoBehaviour {
         if (currentHealth >= 0) {
             newBarSize = (currentHealth * maxSize) / maxHealth;
         }
-        StartCoroutine(updateBar(currentBarSize, newBarSize));
-        Debug.Log("maxHealth: " + maxHealth + "    currentHealth:" + currentHealth + "   damage: " + damage + "    maxSize: " + maxSize);
+        StartCoroutine(updateBar(currentBarSize, newBarSize, enemyDead));
     }
 
-
-    private IEnumerator updateBar(float currentSize, float newSize) {
+    private IEnumerator updateBar(float currentSize, float newSize, bool enemyDead=false) {
         float timePassed = 0f, lerpDuration = 0.5f;
+        newSize = enemyDead ? 0 : newSize;
         barIsLerping = true;
         while (timePassed < lerpDuration) {
             float t = timePassed / lerpDuration;
@@ -45,6 +46,7 @@ public class EnemyHealthBar : MonoBehaviour {
         }
         barIsLerping = false;
 
-        Debug.Log("Lerp concluído!");
+        if (enemyDead)
+            enemy.GetComponent<Animator>().Play("die");
     }
 }

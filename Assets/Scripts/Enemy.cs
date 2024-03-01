@@ -4,7 +4,7 @@ using UnityEngine;
 public class Enemy : MonoBehaviour {
     public EnemyObject enemyConfigs;
 
-    private bool isLerpingDamage = false;
+    private bool isLerpingDamage = false, isDead = false;
     private float speed, attackDamage, originalHealth, currentHealth;
     private MeshRenderer meshRenderer;
     private Color originalColor;
@@ -25,8 +25,10 @@ public class Enemy : MonoBehaviour {
     }
 
     private void Update() {
-        if (currentHealth <= 0) {
-            Destroy(gameObject);
+        if (!isDead) {
+            if (currentHealth <= 0) {
+                isDead = true;
+            }
         }
     }
 
@@ -36,18 +38,20 @@ public class Enemy : MonoBehaviour {
             meshRenderer.material.color = originalColor;
         }
         currentHealth -= damage;
-        scriptHealthBar.updateHealth(currentHealth, originalHealth, damage);
+        bool dead = currentHealth <= 0 ? true : false;
+        scriptHealthBar.updateHealth(currentHealth, originalHealth, damage, dead);
         StartCoroutine(blinkDamage());
     }
 
 
     private void OnCollisionEnter(Collision collision) {
-        if (collision.gameObject.CompareTag("bullet")) {
-            Bullet scriptBullet = collision.gameObject.GetComponent<Bullet>();
-            takeDamage(scriptBullet.damage);
+        if (!isDead) {
+            if (collision.gameObject.CompareTag("bullet")) {
+                Bullet scriptBullet = collision.gameObject.GetComponent<Bullet>();
+                takeDamage(scriptBullet.damage);
+            }
         }
     }
-
 
     private IEnumerator blinkDamage() {     //Método para fazer o inimigo "piscar" ao levar dano
         isLerpingDamage = true;
@@ -65,6 +69,10 @@ public class Enemy : MonoBehaviour {
             yield return null;
         }
         isLerpingDamage = false;
+    }
+
+    private void finishDieAnimation() {
+        Destroy(gameObject);
     }
 
 }
