@@ -3,12 +3,13 @@ using UnityEngine;
 using UnityEngine.AI;
 
 public class Enemy : MonoBehaviour {
-    public EnemyObject enemyConfigs;
-    public Transform playerTransform, bulletHole;
+    public EnemyObject[] enemyConfigs;
+    public Transform bulletHole;
+    [HideInInspector] public Transform playerTransform;
+    public int enemyType;
 
     private bool isLerpingDamage = false, isDead = false, chasing = true, canShoot = true;
     private float bulletDamage, originalHealth, currentHealth, shotCooldown;
-    [SerializeField] private float distPlayer;
     private MeshRenderer meshRenderer;
     private NavMeshAgent navMesh;
     private Color originalColor;
@@ -19,39 +20,36 @@ public class Enemy : MonoBehaviour {
     private void Start() {
         meshRenderer = GetComponent<MeshRenderer>();
         navMesh = GetComponent<NavMeshAgent>();
-        currentHealth = enemyConfigs.health;
+        currentHealth = enemyConfigs[enemyType].health;
         originalHealth = currentHealth;
-        bulletDamage = enemyConfigs.bulletDamage;
-        meshRenderer.material.color = enemyConfigs.color;
-        shotCooldown = enemyConfigs.shotCooldown;
+        bulletDamage = enemyConfigs[enemyType].bulletDamage;
+        meshRenderer.material.color = enemyConfigs[enemyType].color;
+        navMesh.speed = enemyConfigs[enemyType].speed;
+        shotCooldown = enemyConfigs[enemyType].shotCooldown;
         originalColor = meshRenderer.material.color;
         scriptHealthBar = healthBar.GetComponent<EnemyHealthBar>();
         healthBar.SetActive(true);
     }
 
     private void Update() {
+        navMesh.destination = playerTransform.position;
         transform.LookAt(playerTransform.position);   //Fazendo o inimigo sempre olhar para o player
-
-        if (!isDead) {
-            if (currentHealth <= 0) {
-                isDead = true;
-            }
-        }
-
-        if ((transform.position - playerTransform.position).magnitude <= distPlayer) {
+        //Debug.Log("hasPath: " + navMesh.hasPath + "    isStopped: " + navMesh.isStopped + "    velocity: " + navMesh.velocity);
+        if (navMesh.velocity.magnitude <= 0.1f)
             chasing = false;
-            navMesh.destination = transform.position;
-        }
-        else {
+        else
             chasing = true;
-            navMesh.destination = playerTransform.position;
-        }
 
         if (!chasing) {    //Se estiver perto do jogador
             if (canShoot) {
                 canShoot = false;
                 StartCoroutine(shoot());
             }
+        }
+
+        if (!isDead) {
+            if (currentHealth <= 0)
+                isDead = true;
         }
     }
 

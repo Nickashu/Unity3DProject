@@ -15,4 +15,5 @@ MonoBehaviour:
   health: 50
   bulletDamage: 5
   shotCooldown: 0.5
+  speed: 5
   color: {r: 0.2551062, g: 0.5849056, b: 0, a: 0}
