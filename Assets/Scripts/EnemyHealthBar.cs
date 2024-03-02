@@ -5,6 +5,7 @@ public class EnemyHealthBar : MonoBehaviour {
     private float maxSize, newBarSize, currentBarSize;
     private bool barIsLerping = false;
     private RectTransform rectTransform, bgRectTransform;
+    private Quaternion originalRotation;
 
     public GameObject enemy;
     
@@ -14,10 +15,11 @@ public class EnemyHealthBar : MonoBehaviour {
         currentBarSize = maxSize;
         bgRectTransform = transform.parent.GetComponent<RectTransform>();
         rectTransform = GetComponent<RectTransform>();
+        originalRotation = bgRectTransform.rotation;
     }
 
     private void Update() {
-        bgRectTransform.rotation = new Quaternion(bgRectTransform.rotation.x, Camera.main.transform.rotation.y, bgRectTransform.rotation.z, Camera.main.transform.rotation.w);
+        bgRectTransform.rotation = new Quaternion(originalRotation.x, Camera.main.transform.rotation.y, originalRotation.z, Camera.main.transform.rotation.w);
     }
 
     public void updateHealth(float currentHealth, float maxHealth, float damage, bool enemyDead=false) {

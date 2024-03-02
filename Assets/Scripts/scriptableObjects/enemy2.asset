@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: enemy2
   m_EditorClassIdentifier: 
   health: 20
-  speed: 15
-  attackDamage: 7
+  bulletDamage: 2
+  shotCooldown: 1
   color: {r: 1, g: 0, b: 0.473217, a: 0}

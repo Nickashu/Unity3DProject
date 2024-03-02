@@ -6,7 +6,7 @@ using UnityEngine.InputSystem;
 public class Player : MonoBehaviour {
 
     private float vertical, horizontal, turnSmoothVelocity;
-    private bool canShoot = true, aiming = false, enableAiming = true;
+    private bool canShoot = true, aiming = false, enableAiming = true, isDead=false;
     private int selectedGun=0;
     private Rigidbody rb;
     [SerializeField] 
@@ -22,6 +22,7 @@ public class Player : MonoBehaviour {
     }
 
     private void Update() {
+        //Debug.Log("rotacao jogador: " + transform.rotation.eulerAngles.x + "   " + transform.rotation.eulerAngles.y + "   " + transform.rotation.eulerAngles.z);
         aiming = Input.GetKey(KeyCode.Mouse1);
         if (aiming)
             movementSpeed = originalMovementSpeed * 0.7f;
@@ -123,5 +124,22 @@ public class Player : MonoBehaviour {
         enableAiming = true;
         yield return new WaitForSeconds(BulletController.GetInstance().shotCoolDownGuns[selectedGun] * 0.5f);
         canShoot = true;
+    }
+
+
+
+    private void takeDamage(float damage) {
+        Debug.Log("player tomou dano!");
+    }
+
+
+    private void OnCollisionEnter(Collision collision) {
+        if (!isDead) {
+            if (collision.gameObject.CompareTag("bullet")) {
+                Bullet scriptBullet = collision.gameObject.GetComponent<Bullet>();
+                if (scriptBullet.enemyBullet)    //Se for um tiro de um inimigo
+                    takeDamage(scriptBullet.damage);
+            }
+        }
     }
 }

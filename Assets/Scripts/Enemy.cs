@@ -1,12 +1,16 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class Enemy : MonoBehaviour {
     public EnemyObject enemyConfigs;
+    public Transform playerTransform, bulletHole;
 
-    private bool isLerpingDamage = false, isDead = false;
-    private float speed, attackDamage, originalHealth, currentHealth;
+    private bool isLerpingDamage = false, isDead = false, chasing = true, canShoot = true;
+    private float bulletDamage, originalHealth, currentHealth, shotCooldown;
+    [SerializeField] private float distPlayer;
     private MeshRenderer meshRenderer;
+    private NavMeshAgent navMesh;
     private Color originalColor;
 
     public GameObject healthBar;
@@ -14,20 +18,39 @@ public class Enemy : MonoBehaviour {
 
     private void Start() {
         meshRenderer = GetComponent<MeshRenderer>();
+        navMesh = GetComponent<NavMeshAgent>();
         currentHealth = enemyConfigs.health;
         originalHealth = currentHealth;
-        speed = enemyConfigs.speed;
-        attackDamage = enemyConfigs.attackDamage;
+        bulletDamage = enemyConfigs.bulletDamage;
         meshRenderer.material.color = enemyConfigs.color;
+        shotCooldown = enemyConfigs.shotCooldown;
         originalColor = meshRenderer.material.color;
         scriptHealthBar = healthBar.GetComponent<EnemyHealthBar>();
         healthBar.SetActive(true);
     }
 
     private void Update() {
+        transform.LookAt(playerTransform.position);   //Fazendo o inimigo sempre olhar para o player
+
         if (!isDead) {
             if (currentHealth <= 0) {
                 isDead = true;
+            }
+        }
+
+        if ((transform.position - playerTransform.position).magnitude <= distPlayer) {
+            chasing = false;
+            navMesh.destination = transform.position;
+        }
+        else {
+            chasing = true;
+            navMesh.destination = playerTransform.position;
+        }
+
+        if (!chasing) {    //Se estiver perto do jogador
+            if (canShoot) {
+                canShoot = false;
+                StartCoroutine(shoot());
             }
         }
     }
@@ -48,7 +71,8 @@ public class Enemy : MonoBehaviour {
         if (!isDead) {
             if (collision.gameObject.CompareTag("bullet")) {
                 Bullet scriptBullet = collision.gameObject.GetComponent<Bullet>();
-                takeDamage(scriptBullet.damage);
+                if (!scriptBullet.enemyBullet)    //Se não for um tiro de outro inimigo
+                    takeDamage(scriptBullet.damage);
             }
         }
     }
@@ -73,6 +97,14 @@ public class Enemy : MonoBehaviour {
 
     private void finishDieAnimation() {
         Destroy(gameObject);
+    }
+
+
+
+    private IEnumerator shoot() {
+        BulletController.GetInstance().spawnBullet(bulletHole.transform.position, (int)BulletController.typesOfGuns.enemyGun, transform.rotation, true, bulletDamage);
+        yield return new WaitForSeconds(shotCooldown);
+        canShoot = true;
     }
 
 }
