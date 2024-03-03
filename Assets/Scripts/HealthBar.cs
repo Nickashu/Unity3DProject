@@ -31,9 +31,9 @@ public class HealthBar : MonoBehaviour {
         }
         currentBarSize = rectTransform.sizeDelta.x;
         if (currentHealth >= 0) {
+            if (currentHealth >= maxHealth)
+                currentHealth = maxHealth;
             newBarSize = (currentHealth * maxSize) / maxHealth;
-            if (newBarSize >= maxHealth)
-                newBarSize = maxHealth;
         }
         StartCoroutine(updateBar(currentBarSize, newBarSize, creatureDead));
     }
@@ -42,6 +42,8 @@ public class HealthBar : MonoBehaviour {
         float timePassed = 0f, lerpDuration = 0.5f;
         newSize = creatureDead ? 0 : newSize;
         barIsLerping = true;
+        if (newSize <= 0.1)
+            newSize = 0;
         while (timePassed < lerpDuration) {
             float t = timePassed / lerpDuration;
             float lerpValue = Mathf.Lerp(currentSize, newSize, t);
@@ -55,8 +57,6 @@ public class HealthBar : MonoBehaviour {
             if (creature.CompareTag("Player")) {
                 Debug.Log("jogador morreu!");
             }
-            else
-                creature.GetComponent<Animator>().Play("die");
         }
     }
 }

@@ -22,9 +22,9 @@ public class BulletController : MonoBehaviour {
         {(int)typesOfGuns.submachine, 0.2f },
     };
 
-    public Dictionary<int, float> baseDamageGuns = new Dictionary<int, float>() {    //Este dicionário guardará o tempo de cool down entre os tiros de cada tipo de arma
-        {(int)typesOfGuns.pistol, 1f },
-        {(int)typesOfGuns.submachine, 0.3f }
+    public Dictionary<int, float> baseDamageGuns = new Dictionary<int, float>() {    //Este dicionário guardará o dano de cada tipo de arma
+        {(int)typesOfGuns.pistol, 5f },
+        {(int)typesOfGuns.submachine, 1f }
     };
 
     public static BulletController GetInstance() {
@@ -43,8 +43,10 @@ public class BulletController : MonoBehaviour {
         GameObject bullet = Instantiate(bulletObj, position, rotation);
         bullet.GetComponent<Bullet>().velocity = bulletVelocity;
         bullet.GetComponent<Bullet>().enemyBullet = isEnemy;
-        if (isEnemy)
+        if (isEnemy) {
             bullet.GetComponent<Bullet>().damage = enemyBulletDamage;
+            //bullet.GetComponent<Rigidbody>().isKinematic = true;
+        }
         else
             bullet.GetComponent<Bullet>().damage = baseDamageGuns[typeOfGun];
         bullet.SetActive(true);

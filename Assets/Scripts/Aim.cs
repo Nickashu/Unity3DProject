@@ -20,17 +20,14 @@ public class Aim : MonoBehaviour {
             ray = new Ray(transform.position, (playerTransform.rotation * Vector3.forward).normalized);
             if (Physics.Raycast(ray, out hit, 100f)) {
                 aimFinalPosition = hit.point;
-                //Debug.Log("ta mirando em algo!");
-                //Debug.DrawLine(transform.position, hit.point);
                 if (hit.collider.CompareTag("enemy"))
                     lineRenderer.material.color = Color.red;
                 else
                     lineRenderer.material.color = originalColor;
             }
             else {
-                //Debug.Log("nao ta mirando em nada");
+                aimFinalPosition = ray.GetPoint(100f);
                 lineRenderer.material.color = originalColor;
-                aimFinalPosition = playerTransform.forward.normalized * 100f;
             }
             lineRenderer.SetPosition(0, transform.position);
             lineRenderer.SetPosition(1, aimFinalPosition);

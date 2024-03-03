@@ -1,23 +1,29 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.UIElements;
+using static UnityEngine.ParticleSystem;
 
 public class Enemy : MonoBehaviour {
     public EnemyObject[] enemyConfigs;
     public Transform bulletHole;
+    public ParticleSystem particlesDeath;
     [HideInInspector] public Transform playerTransform;
     public int enemyType;
 
-    private bool isLerpingDamage = false, isDead = false, chasing = true, canShoot = true;
+    private bool isLerpingDamage = false, isDead = false, chasing = true, canShoot = true, dead=false;
     private float bulletDamage, originalHealth, currentHealth, shotCooldown;
+    [SerializeField] private float distShootPlayer;
     private MeshRenderer meshRenderer;
     private NavMeshAgent navMesh;
     private Color originalColor;
+    private Player playerScript;
 
     public GameObject healthBar;
     private HealthBar scriptHealthBar;
 
     private void Start() {
+        playerScript = playerTransform.gameObject.GetComponent<Player>();
         meshRenderer = GetComponent<MeshRenderer>();
         navMesh = GetComponent<NavMeshAgent>();
         currentHealth = enemyConfigs[enemyType].health;
@@ -32,17 +38,19 @@ public class Enemy : MonoBehaviour {
     }
 
     private void Update() {
-        navMesh.destination = playerTransform.position;
-        transform.LookAt(playerTransform.position);   //Fazendo o inimigo sempre olhar para o player
-        if (navMesh.velocity.magnitude <= 0.1f)
-            chasing = false;
-        else
-            chasing = true;
+        if (!playerScript.dead) {    //Se o jogador não tiver morrido
+            navMesh.destination = playerTransform.position;
+            transform.LookAt(playerTransform.position);   //Fazendo o inimigo sempre olhar para o player
+            if ((gameObject.transform.position - playerTransform.position).magnitude <= distShootPlayer)
+                chasing = false;
+            else
+                chasing = true;
 
-        if (!chasing) {    //Se estiver perto do jogador
-            if (canShoot) {
-                canShoot = false;
-                StartCoroutine(shoot());
+            if (!chasing) {    //Se estiver perto do jogador
+                if (canShoot && !dead) {
+                    canShoot = false;
+                    StartCoroutine(shoot());
+                }
             }
         }
 
@@ -50,6 +58,17 @@ public class Enemy : MonoBehaviour {
             if (currentHealth <= 0)
                 isDead = true;
         }
+
+        if (dead) {
+            dead = false;
+            enemyDeath();
+        }
+    }
+
+    private IEnumerator shoot() {
+        BulletController.GetInstance().spawnBullet(bulletHole.transform.position, (int)BulletController.typesOfGuns.enemyGun, transform.rotation, true, bulletDamage);
+        yield return new WaitForSeconds(shotCooldown);
+        canShoot = true;
     }
 
     private void OnCollisionEnter(Collision collision) {
@@ -68,13 +87,12 @@ public class Enemy : MonoBehaviour {
             meshRenderer.material.color = originalColor;
         }
         currentHealth -= damage;
-        bool dead = currentHealth <= 0 ? true : false;
+        dead = currentHealth <= 0 ? true : false;
         scriptHealthBar.updateHealth(currentHealth, originalHealth, dead);
         StartCoroutine(blinkDamage());
     }
 
     private IEnumerator blinkDamage() {     //Método para fazer o inimigo "piscar" ao levar dano
-        Debug.Log("pisca");
         isLerpingDamage = true;
         float timePassed = 0f, lerpDuration = 0.2f;
         while (timePassed < lerpDuration) {
@@ -92,15 +110,15 @@ public class Enemy : MonoBehaviour {
         isLerpingDamage = false;
     }
 
-    private void finishDieAnimation() {
+    private void enemyDeath() {
         Destroy(gameObject);
         GameController.GetInstance().numEnemies--;
+        ParticleSystem particles = Instantiate(particlesDeath, gameObject.transform.position, Quaternion.identity);
+        ParticleSystem.MainModule particlesMain = particles.main;
+        Color colorParticles = meshRenderer.material.color;
+        colorParticles.a = 1f;
+        particlesMain.startColor = colorParticles;
+        particles.gameObject.SetActive(true);
+        particles.Play();
     }
-
-    private IEnumerator shoot() {
-        BulletController.GetInstance().spawnBullet(bulletHole.transform.position, (int)BulletController.typesOfGuns.enemyGun, transform.rotation, true, bulletDamage);
-        yield return new WaitForSeconds(shotCooldown);
-        canShoot = true;
-    }
-
 }

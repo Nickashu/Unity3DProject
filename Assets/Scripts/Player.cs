@@ -6,14 +6,15 @@ using UnityEngine.InputSystem;
 public class Player : MonoBehaviour {
 
     private float vertical, horizontal, turnSmoothVelocity, originalHealth, originalMovementSpeed;
-    private bool canShoot = true, aiming = false, enableAiming = true, isDead=false, isLerpingDamage=false;
+    private bool canShoot = true, aiming = false, enableAiming = true, isDead=false, isLerpingDamage=false, deadFlag = false;
     private int selectedGun=0;
     private Rigidbody rb;
     [SerializeField] private float jumpPower, movementSpeed, jumpSmoothness, turnSmoothTime, maxMovementVelocity, currentHealth;
-    [HideInInspector] public bool showAiming = false;
+    [HideInInspector] public bool showAiming = false, dead=false;
 
     public Transform groundCheck, cam, bulletHole;
     public LayerMask groundLayer;
+    public ParticleSystem particlesDeath;
     public GameObject healthBar;
     private HealthBar scriptHealthBar;
     private MeshRenderer meshRenderer;
@@ -26,7 +27,6 @@ public class Player : MonoBehaviour {
         originalHealth = currentHealth;
         meshRenderer = gameObject.GetComponent<MeshRenderer>();
         originalColor = meshRenderer.material.color;
-
         InvokeRepeating("IncreaseHealth", 0f, 1f);   //A vida do jogador aumentará constantemente
     }
 
@@ -46,6 +46,11 @@ public class Player : MonoBehaviour {
             showAiming = true;
         else
             showAiming = false;
+
+        if (dead && !deadFlag) {
+            deadFlag = true;
+            playerDeath();
+        }
 
 
         //Detecções de botões:
@@ -145,22 +150,23 @@ public class Player : MonoBehaviour {
         }
     }
 
+    //Métodos referentes à dano e barra de vida:
     private void takeDamage(float damage) {
         if (isLerpingDamage) {
             isLerpingDamage = false;
             meshRenderer.material.color = originalColor;
         }
         currentHealth -= damage;
-        bool dead = currentHealth <= 0 ? true : false;
+        dead = currentHealth <= 0 ? true : false;
         scriptHealthBar.updateHealth(currentHealth, originalHealth, dead);
         StartCoroutine(blinkDamage());
     }
 
     private IEnumerator blinkDamage() {
         isLerpingDamage = true;
-        float timePassed = 0f, lerpDuration = 0.1f;
+        float timePassed = 0f, lerpDuration = 0.2f;
         while (timePassed < lerpDuration) {
-            meshRenderer.material.color = Color.Lerp(originalColor, Color.white, lerpDuration);
+            meshRenderer.material.color = Color.Lerp(originalColor, Color.black, lerpDuration);
             timePassed += Time.deltaTime;
             yield return null;
         }
@@ -175,9 +181,22 @@ public class Player : MonoBehaviour {
     }
 
     private void IncreaseHealth() {
-        if(currentHealth < originalHealth) {
-            currentHealth += 0.5f;
-            scriptHealthBar.updateHealth(currentHealth, originalHealth, false);
+        if (!dead) {
+            if (currentHealth < originalHealth) {
+                currentHealth += 0.5f;
+                scriptHealthBar.updateHealth(currentHealth, originalHealth, false);
+            }
         }
+    }
+
+    private void playerDeath() {
+        gameObject.SetActive(false);
+        ParticleSystem particles = Instantiate(particlesDeath, gameObject.transform.position, Quaternion.identity);
+        ParticleSystem.MainModule particlesMain = particles.main;
+        Color colorParticles = meshRenderer.material.color;
+        colorParticles.a = 1f;
+        particlesMain.startColor = colorParticles;
+        particles.gameObject.SetActive(true);
+        particles.Play();
     }
 }
