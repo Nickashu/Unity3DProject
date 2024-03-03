@@ -1,14 +1,14 @@
 using System.Collections;
 using UnityEngine;
 
-public class EnemyHealthBar : MonoBehaviour {
+public class HealthBar : MonoBehaviour {
     private float maxSize, newBarSize, currentBarSize;
     private bool barIsLerping = false;
     private RectTransform rectTransform, bgRectTransform;
     private Quaternion originalRotation;
 
-    public GameObject enemy;
-    
+    public GameObject creature;
+
     private void Start() {
         maxSize = transform.parent.GetComponent<RectTransform>().sizeDelta.x;
         newBarSize = maxSize;
@@ -19,10 +19,11 @@ public class EnemyHealthBar : MonoBehaviour {
     }
 
     private void Update() {
-        bgRectTransform.rotation = new Quaternion(originalRotation.x, Camera.main.transform.rotation.y, originalRotation.z, Camera.main.transform.rotation.w);
+        if (!gameObject.CompareTag("playerHealth"))    //Se for a vida do inimigo
+            bgRectTransform.rotation = new Quaternion(originalRotation.x, Camera.main.transform.rotation.y, originalRotation.z, Camera.main.transform.rotation.w);
     }
 
-    public void updateHealth(float currentHealth, float maxHealth, float damage, bool enemyDead=false) {
+    public void updateHealth(float currentHealth, float maxHealth, bool creatureDead = false) {
         if (barIsLerping) {   //Se a vida estiver diminuindo quando o próximo tiro acertar
             StopAllCoroutines();
             barIsLerping = false;
@@ -31,13 +32,15 @@ public class EnemyHealthBar : MonoBehaviour {
         currentBarSize = rectTransform.sizeDelta.x;
         if (currentHealth >= 0) {
             newBarSize = (currentHealth * maxSize) / maxHealth;
+            if (newBarSize >= maxHealth)
+                newBarSize = maxHealth;
         }
-        StartCoroutine(updateBar(currentBarSize, newBarSize, enemyDead));
+        StartCoroutine(updateBar(currentBarSize, newBarSize, creatureDead));
     }
 
-    private IEnumerator updateBar(float currentSize, float newSize, bool enemyDead=false) {
+    private IEnumerator updateBar(float currentSize, float newSize, bool creatureDead = false) {
         float timePassed = 0f, lerpDuration = 0.5f;
-        newSize = enemyDead ? 0 : newSize;
+        newSize = creatureDead ? 0 : newSize;
         barIsLerping = true;
         while (timePassed < lerpDuration) {
             float t = timePassed / lerpDuration;
@@ -48,7 +51,12 @@ public class EnemyHealthBar : MonoBehaviour {
         }
         barIsLerping = false;
 
-        if (enemyDead)
-            enemy.GetComponent<Animator>().Play("die");
+        if (creatureDead) {
+            if (creature.CompareTag("Player")) {
+                Debug.Log("jogador morreu!");
+            }
+            else
+                creature.GetComponent<Animator>().Play("die");
+        }
     }
 }

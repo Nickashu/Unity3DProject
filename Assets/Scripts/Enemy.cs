@@ -15,7 +15,7 @@ public class Enemy : MonoBehaviour {
     private Color originalColor;
 
     public GameObject healthBar;
-    private EnemyHealthBar scriptHealthBar;
+    private HealthBar scriptHealthBar;
 
     private void Start() {
         meshRenderer = GetComponent<MeshRenderer>();
@@ -27,14 +27,13 @@ public class Enemy : MonoBehaviour {
         navMesh.speed = enemyConfigs[enemyType].speed;
         shotCooldown = enemyConfigs[enemyType].shotCooldown;
         originalColor = meshRenderer.material.color;
-        scriptHealthBar = healthBar.GetComponent<EnemyHealthBar>();
+        scriptHealthBar = healthBar.GetComponent<HealthBar>();
         healthBar.SetActive(true);
     }
 
     private void Update() {
         navMesh.destination = playerTransform.position;
         transform.LookAt(playerTransform.position);   //Fazendo o inimigo sempre olhar para o player
-        //Debug.Log("hasPath: " + navMesh.hasPath + "    isStopped: " + navMesh.isStopped + "    velocity: " + navMesh.velocity);
         if (navMesh.velocity.magnitude <= 0.1f)
             chasing = false;
         else
@@ -53,18 +52,6 @@ public class Enemy : MonoBehaviour {
         }
     }
 
-    private void takeDamage(float damage) {
-        if (isLerpingDamage) {
-            isLerpingDamage=false;
-            meshRenderer.material.color = originalColor;
-        }
-        currentHealth -= damage;
-        bool dead = currentHealth <= 0 ? true : false;
-        scriptHealthBar.updateHealth(currentHealth, originalHealth, damage, dead);
-        StartCoroutine(blinkDamage());
-    }
-
-
     private void OnCollisionEnter(Collision collision) {
         if (!isDead) {
             if (collision.gameObject.CompareTag("bullet")) {
@@ -75,11 +62,23 @@ public class Enemy : MonoBehaviour {
         }
     }
 
+    private void takeDamage(float damage) {
+        if (isLerpingDamage) {
+            isLerpingDamage=false;
+            meshRenderer.material.color = originalColor;
+        }
+        currentHealth -= damage;
+        bool dead = currentHealth <= 0 ? true : false;
+        scriptHealthBar.updateHealth(currentHealth, originalHealth, dead);
+        StartCoroutine(blinkDamage());
+    }
+
     private IEnumerator blinkDamage() {     //Método para fazer o inimigo "piscar" ao levar dano
+        Debug.Log("pisca");
         isLerpingDamage = true;
-        float timePassed = 0f, lerpDuration = 0.1f;
+        float timePassed = 0f, lerpDuration = 0.2f;
         while (timePassed < lerpDuration) {
-            meshRenderer.material.color =  Color.Lerp(originalColor, Color.white, lerpDuration);
+            meshRenderer.material.color =  Color.Lerp(originalColor, Color.black, lerpDuration);
             timePassed += Time.deltaTime;
             yield return null;
         }
@@ -97,8 +96,6 @@ public class Enemy : MonoBehaviour {
         Destroy(gameObject);
         GameController.GetInstance().numEnemies--;
     }
-
-
 
     private IEnumerator shoot() {
         BulletController.GetInstance().spawnBullet(bulletHole.transform.position, (int)BulletController.typesOfGuns.enemyGun, transform.rotation, true, bulletDamage);

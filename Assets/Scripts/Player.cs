@@ -5,20 +5,29 @@ using UnityEngine.InputSystem;
 
 public class Player : MonoBehaviour {
 
-    private float vertical, horizontal, turnSmoothVelocity;
-    private bool canShoot = true, aiming = false, enableAiming = true, isDead=false;
+    private float vertical, horizontal, turnSmoothVelocity, originalHealth, originalMovementSpeed;
+    private bool canShoot = true, aiming = false, enableAiming = true, isDead=false, isLerpingDamage=false;
     private int selectedGun=0;
     private Rigidbody rb;
-    [SerializeField] 
-    private float jumpPower, movementSpeed, jumpSmoothness, turnSmoothTime, originalMovementSpeed, maxMovementVelocity;
+    [SerializeField] private float jumpPower, movementSpeed, jumpSmoothness, turnSmoothTime, maxMovementVelocity, currentHealth;
+    [HideInInspector] public bool showAiming = false;
 
-    public bool showAiming = false;
     public Transform groundCheck, cam, bulletHole;
     public LayerMask groundLayer;
+    public GameObject healthBar;
+    private HealthBar scriptHealthBar;
+    private MeshRenderer meshRenderer;
+    private Color originalColor;
 
     private void Start() {
         rb = GetComponent<Rigidbody>();
         originalMovementSpeed = movementSpeed;
+        scriptHealthBar = healthBar.GetComponent<HealthBar>();
+        originalHealth = currentHealth;
+        meshRenderer = gameObject.GetComponent<MeshRenderer>();
+        originalColor = meshRenderer.material.color;
+
+        InvokeRepeating("IncreaseHealth", 0f, 1f);   //A vida do jogador aumentará constantemente
     }
 
     private void Update() {
@@ -126,13 +135,6 @@ public class Player : MonoBehaviour {
         canShoot = true;
     }
 
-
-
-    private void takeDamage(float damage) {
-        Debug.Log("player tomou dano!");
-    }
-
-
     private void OnCollisionEnter(Collision collision) {
         if (!isDead) {
             if (collision.gameObject.CompareTag("bullet")) {
@@ -140,6 +142,42 @@ public class Player : MonoBehaviour {
                 if (scriptBullet.enemyBullet)    //Se for um tiro de um inimigo
                     takeDamage(scriptBullet.damage);
             }
+        }
+    }
+
+    private void takeDamage(float damage) {
+        if (isLerpingDamage) {
+            isLerpingDamage = false;
+            meshRenderer.material.color = originalColor;
+        }
+        currentHealth -= damage;
+        bool dead = currentHealth <= 0 ? true : false;
+        scriptHealthBar.updateHealth(currentHealth, originalHealth, dead);
+        StartCoroutine(blinkDamage());
+    }
+
+    private IEnumerator blinkDamage() {
+        isLerpingDamage = true;
+        float timePassed = 0f, lerpDuration = 0.1f;
+        while (timePassed < lerpDuration) {
+            meshRenderer.material.color = Color.Lerp(originalColor, Color.white, lerpDuration);
+            timePassed += Time.deltaTime;
+            yield return null;
+        }
+        yield return new WaitForSeconds(0.2f);
+        timePassed = 0f;
+        while (timePassed < lerpDuration) {
+            meshRenderer.material.color = Color.Lerp(meshRenderer.material.color, originalColor, lerpDuration);
+            timePassed += Time.deltaTime;
+            yield return null;
+        }
+        isLerpingDamage = false;
+    }
+
+    private void IncreaseHealth() {
+        if(currentHealth < originalHealth) {
+            currentHealth += 0.5f;
+            scriptHealthBar.updateHealth(currentHealth, originalHealth, false);
         }
     }
 }
