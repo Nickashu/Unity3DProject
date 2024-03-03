@@ -95,6 +95,7 @@ public class Enemy : MonoBehaviour {
 
     private void finishDieAnimation() {
         Destroy(gameObject);
+        GameController.GetInstance().numEnemies--;
     }
 
 

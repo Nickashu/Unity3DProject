@@ -1,10 +1,12 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameController : MonoBehaviour {
 
     [HideInInspector] public bool gamePaused = false;
     [SerializeField] private int maxNumEnemies;
-    private int numEnemies;
+    [HideInInspector] public int numEnemies;
+    private bool isInGameScene = false;
 
     private static GameController instance;
     public Transform[] enemySpawnPoints;
@@ -15,12 +17,6 @@ public class GameController : MonoBehaviour {
         return instance;
     }
 
-    private void Start() {
-        //Cursor.visible = false;   debug
-        InvokeRepeating("spawnEnemy", 2f, 5f);
-        numEnemies = 0;
-    }
-
     private void Awake() {
         if (instance == null)
             instance = this;
@@ -28,9 +24,19 @@ public class GameController : MonoBehaviour {
             Destroy(gameObject);
     }
 
+    private void Start() {
+        if (SceneManager.GetActiveScene().name.ToLower().Contains("main")) {
+            isInGameScene = true;
+            //Cursor.visible = false;   debug
+            InvokeRepeating("spawnEnemy", 2f, 5f);
+            numEnemies = 0;
+        }
+    }
+
     private void Update() {
-        if (Input.GetKeyDown(KeyCode.Escape)) {
-            gamePaused = !gamePaused;
+        if (isInGameScene)
+            if (Input.GetKeyDown(KeyCode.Escape)) {
+                gamePaused = !gamePaused;
         }
     }
 
@@ -46,6 +52,18 @@ public class GameController : MonoBehaviour {
             Debug.Log("spawnou inimigo " + enemyType);
             numEnemies++;
         }
+    }
+
+
+    //Métodos ativados com botões:
+    public void StartGame() {
+        TransitionController.GetInstance().LoadMainScene();
+    }
+    public void QuitGame() {
+        Application.Quit();
+    }
+    public void Options() {
+        Debug.Log("Menu de opções!");
     }
 
 }
