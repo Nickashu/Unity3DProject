@@ -18,7 +18,7 @@ public class Aim : MonoBehaviour {
         if (playerScript.showAiming) {   //Se o jogador estiver mirando
             Vector3 aimFinalPosition;
             ray = new Ray(transform.position, (playerTransform.rotation * Vector3.forward).normalized);
-            if (Physics.Raycast(ray, out hit, 100f)) {
+            if (Physics.Raycast(ray, out hit, 300f)) {
                 aimFinalPosition = hit.point;
                 if (hit.collider.CompareTag("enemy"))
                     lineRenderer.material.color = Color.red;
@@ -26,7 +26,7 @@ public class Aim : MonoBehaviour {
                     lineRenderer.material.color = originalColor;
             }
             else {
-                aimFinalPosition = ray.GetPoint(100f);
+                aimFinalPosition = ray.GetPoint(300f);
                 lineRenderer.material.color = originalColor;
             }
             lineRenderer.SetPosition(0, transform.position);

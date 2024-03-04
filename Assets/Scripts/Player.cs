@@ -9,7 +9,7 @@ public class Player : MonoBehaviour {
     private bool canShoot = true, aiming = false, enableAiming = true, isDead=false, isLerpingDamage=false, deadFlag = false;
     private int selectedGun=0;
     private Rigidbody rb;
-    [SerializeField] private float jumpPower, movementSpeed, jumpSmoothness, turnSmoothTime, maxMovementVelocity, currentHealth;
+    [SerializeField] private float jumpPower, movementSpeed, jumpSmoothness, turnSmoothTime, maxMovementVelocity, currentHealth, healthIncrease;
     [HideInInspector] public bool showAiming = false, dead=false;
 
     public Transform groundCheck, cam, bulletHole;
@@ -31,43 +31,46 @@ public class Player : MonoBehaviour {
     }
 
     private void Update() {
-        //Debug.Log("rotacao jogador: " + transform.rotation.eulerAngles.x + "   " + transform.rotation.eulerAngles.y + "   " + transform.rotation.eulerAngles.z);
-        aiming = Input.GetKey(KeyCode.Mouse1);
-        if (aiming)
-            movementSpeed = originalMovementSpeed * 0.7f;
-        else {   //Só poderá correr se não estiver mirando
-            if (Input.GetKey(KeyCode.LeftShift))
-                movementSpeed = originalMovementSpeed * 1.5f;
+        if (!GameController.GetInstance().gamePaused) {    //Se o jogo não estiver pausado
+            aiming = Input.GetKey(KeyCode.Mouse1);
+            if (aiming)
+                movementSpeed = originalMovementSpeed * 0.7f;
+            else {   //Só poderá correr se não estiver mirando
+                if (Input.GetKey(KeyCode.LeftShift))
+                    movementSpeed = originalMovementSpeed * 1.5f;
+                else
+                    movementSpeed = originalMovementSpeed;
+            }
+
+            if (aiming && enableAiming)
+                showAiming = true;
             else
-                movementSpeed = originalMovementSpeed;
-        }
+                showAiming = false;
 
-        if (aiming && enableAiming)
-            showAiming = true;
-        else
-            showAiming = false;
-
-        if (dead && !deadFlag) {
-            deadFlag = true;
-            playerDeath();
-        }
+            if (dead) {
+                if (!deadFlag) {
+                    deadFlag = true;
+                    playerDeath();
+                }
+            }
 
 
-        //Detecções de botões:
-        if (Input.GetKeyDown(KeyCode.R)) {    //Para trocar de arma
-            if (selectedGun == BulletController.GetInstance().shotCoolDownGuns.Count - 1)
-                selectedGun = 0;
-            else
-                selectedGun++;
-            canShoot = true;
-            updateSelectedGun();
-        }
+            //Detecções de botões:
+            if (Input.GetKeyDown(KeyCode.R)) {    //Para trocar de arma
+                if (selectedGun == BulletController.GetInstance().shotCoolDownGuns.Count - 1)
+                    selectedGun = 0;
+                else
+                    selectedGun++;
+                canShoot = true;
+                updateSelectedGun();
+            }
 
-        if (Input.GetKey(KeyCode.Mouse0)) {
-            if (canShoot) {
-                canShoot = false;
-                enableAiming = false;
-                StartCoroutine(shoot());
+            if (Input.GetKey(KeyCode.Mouse0)) {
+                if (canShoot) {
+                    canShoot = false;
+                    enableAiming = false;
+                    StartCoroutine(shoot());
+                }
             }
         }
     }
@@ -183,7 +186,7 @@ public class Player : MonoBehaviour {
     private void IncreaseHealth() {
         if (!dead) {
             if (currentHealth < originalHealth) {
-                currentHealth += 0.5f;
+                currentHealth += healthIncrease;
                 scriptHealthBar.updateHealth(currentHealth, originalHealth, false);
             }
         }
@@ -191,6 +194,7 @@ public class Player : MonoBehaviour {
 
     private void playerDeath() {
         gameObject.SetActive(false);
+        GameController.GetInstance().gamePaused = true;
         ParticleSystem particles = Instantiate(particlesDeath, gameObject.transform.position, Quaternion.identity);
         ParticleSystem.MainModule particlesMain = particles.main;
         Color colorParticles = meshRenderer.material.color;

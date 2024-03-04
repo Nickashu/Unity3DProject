@@ -11,7 +11,7 @@ public class Enemy : MonoBehaviour {
     [HideInInspector] public Transform playerTransform;
     public int enemyType;
 
-    private bool isLerpingDamage = false, isDead = false, chasing = true, canShoot = true, dead=false;
+    private bool isLerpingDamage = false, isDead = false, chasing = true, canShoot = true, deadFlag=false;
     private float bulletDamage, originalHealth, currentHealth, shotCooldown;
     [SerializeField] private float distShootPlayer;
     private MeshRenderer meshRenderer;
@@ -26,6 +26,7 @@ public class Enemy : MonoBehaviour {
         playerScript = playerTransform.gameObject.GetComponent<Player>();
         meshRenderer = GetComponent<MeshRenderer>();
         navMesh = GetComponent<NavMeshAgent>();
+        scriptHealthBar = healthBar.GetComponent<HealthBar>();
         currentHealth = enemyConfigs[enemyType].health;
         originalHealth = currentHealth;
         bulletDamage = enemyConfigs[enemyType].bulletDamage;
@@ -33,35 +34,40 @@ public class Enemy : MonoBehaviour {
         navMesh.speed = enemyConfigs[enemyType].speed;
         shotCooldown = enemyConfigs[enemyType].shotCooldown;
         originalColor = meshRenderer.material.color;
-        scriptHealthBar = healthBar.GetComponent<HealthBar>();
         healthBar.SetActive(true);
     }
 
     private void Update() {
-        if (!playerScript.dead) {    //Se o jogador não tiver morrido
-            navMesh.destination = playerTransform.position;
-            transform.LookAt(playerTransform.position);   //Fazendo o inimigo sempre olhar para o player
-            if ((gameObject.transform.position - playerTransform.position).magnitude <= distShootPlayer)
-                chasing = false;
-            else
-                chasing = true;
+        if (!GameController.GetInstance().gamePaused) {
+            if (!playerScript.dead) {    //Se o jogador não tiver morrido
+                navMesh.destination = playerTransform.position;
+                transform.LookAt(playerTransform.position);   //Fazendo o inimigo sempre olhar para o player
+                if ((gameObject.transform.position - playerTransform.position).magnitude <= distShootPlayer)
+                    chasing = false;
+                else
+                    chasing = true;
 
-            if (!chasing) {    //Se estiver perto do jogador
-                if (canShoot && !dead) {
-                    canShoot = false;
-                    StartCoroutine(shoot());
+                if (!chasing) {    //Se estiver perto do jogador
+                    if (canShoot && !isDead) {
+                        canShoot = false;
+                        StartCoroutine(shoot());
+                    }
                 }
             }
-        }
 
-        if (!isDead) {
-            if (currentHealth <= 0)
-                isDead = true;
+            if (isDead) {
+                if (!deadFlag) {
+                    deadFlag = true;
+                    enemyDeath();
+                }
+            }
+            else {
+                if (currentHealth <= 0)
+                    isDead = true;
+            }
         }
-
-        if (dead) {
-            dead = false;
-            enemyDeath();
+        else {
+            navMesh.velocity = Vector3.zero;
         }
     }
 
@@ -87,8 +93,8 @@ public class Enemy : MonoBehaviour {
             meshRenderer.material.color = originalColor;
         }
         currentHealth -= damage;
-        dead = currentHealth <= 0 ? true : false;
-        scriptHealthBar.updateHealth(currentHealth, originalHealth, dead);
+        isDead = currentHealth <= 0 ? true : false;
+        scriptHealthBar.updateHealth(currentHealth, originalHealth, isDead);
         StartCoroutine(blinkDamage());
     }
 
@@ -112,6 +118,7 @@ public class Enemy : MonoBehaviour {
 
     private void enemyDeath() {
         Destroy(gameObject);
+        GameController.GetInstance().updateCoins(enemyType+1);
         GameController.GetInstance().numEnemies--;
         ParticleSystem particles = Instantiate(particlesDeath, gameObject.transform.position, Quaternion.identity);
         ParticleSystem.MainModule particlesMain = particles.main;
