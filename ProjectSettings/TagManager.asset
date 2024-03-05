@@ -8,6 +8,8 @@ TagManager:
   - bullet
   - enemy
   - playerHealth
+  - pistolUpgrade
+  - SMGUpgrade
   layers:
   - Default
   - TransparentFX

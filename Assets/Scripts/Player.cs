@@ -57,7 +57,7 @@ public class Player : MonoBehaviour {
 
             //Detecções de botões:
             if (Input.GetKeyDown(KeyCode.R)) {    //Para trocar de arma
-                if (selectedGun == BulletController.GetInstance().shotCoolDownGuns.Count - 1)
+                if (selectedGun == Globals.shotCoolDownGuns.Count - 1)
                     selectedGun = 0;
                 else
                     selectedGun++;
@@ -131,15 +131,15 @@ public class Player : MonoBehaviour {
     }
 
     private void updateSelectedGun() {
-        Debug.Log("Mudou para a arma: " + Enum.GetName(typeof(BulletController.typesOfGuns), selectedGun));
+        Debug.Log("Mudou para a arma: " + Enum.GetName(typeof(Globals.typesOfGuns), selectedGun));
     }
 
 
     private IEnumerator shoot() {
         BulletController.GetInstance().spawnBullet(bulletHole.transform.position, selectedGun, transform.rotation);
-        yield return new WaitForSeconds(BulletController.GetInstance().shotCoolDownGuns[selectedGun] * 0.5f);  //Espera metade do tempo de cool down para liberar a mira novamente
+        yield return new WaitForSeconds(Globals.shotCoolDownGuns[selectedGun] * 0.5f);  //Espera metade do tempo de cool down para liberar a mira novamente
         enableAiming = true;
-        yield return new WaitForSeconds(BulletController.GetInstance().shotCoolDownGuns[selectedGun] * 0.5f);
+        yield return new WaitForSeconds(Globals.shotCoolDownGuns[selectedGun] * 0.5f);
         canShoot = true;
     }
 

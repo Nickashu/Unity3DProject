@@ -1,13 +1,13 @@
 using System.Collections;
+using TMPro;
 using UnityEngine;
 using UnityEngine.AI;
-using UnityEngine.UIElements;
-using static UnityEngine.ParticleSystem;
 
 public class Enemy : MonoBehaviour {
     public EnemyObject[] enemyConfigs;
     public Transform bulletHole;
     public ParticleSystem particlesDeath;
+    public Canvas canvasPoints;
     [HideInInspector] public Transform playerTransform;
     public int enemyType;
 
@@ -72,7 +72,7 @@ public class Enemy : MonoBehaviour {
     }
 
     private IEnumerator shoot() {
-        BulletController.GetInstance().spawnBullet(bulletHole.transform.position, (int)BulletController.typesOfGuns.enemyGun, transform.rotation, true, bulletDamage);
+        BulletController.GetInstance().spawnBullet(bulletHole.transform.position, (int)Globals.typesOfGuns.enemyGun, transform.rotation, true, bulletDamage);
         yield return new WaitForSeconds(shotCooldown);
         canShoot = true;
     }
@@ -118,8 +118,16 @@ public class Enemy : MonoBehaviour {
 
     private void enemyDeath() {
         Destroy(gameObject);
-        GameController.GetInstance().updateCoins(enemyType+1);
+        int amountCoins = (enemyType + 1) * GameController.GetInstance().coinsMultiplier;    //Calculando o número de moedas que o jogador ganhou ao matar o inimigo
+        GameController.GetInstance().updateCoins(amountCoins);
         GameController.GetInstance().numEnemies--;
+        //Pontuação:
+        Vector3 ptsPosition = gameObject.transform.position;
+        ptsPosition.y += 2;   //Fazendo a pontuação aparecer um pouco acima do inimigo
+        Canvas canvasPts = Instantiate(canvasPoints, ptsPosition, new Quaternion(transform.rotation.x, Camera.main.transform.rotation.y, transform.rotation.z, Camera.main.transform.rotation.w));
+        canvasPts.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = "+" + amountCoins.ToString();
+        canvasPts.gameObject.SetActive(true);
+        //Sistema de partículas:
         ParticleSystem particles = Instantiate(particlesDeath, gameObject.transform.position, Quaternion.identity);
         ParticleSystem.MainModule particlesMain = particles.main;
         Color colorParticles = meshRenderer.material.color;
