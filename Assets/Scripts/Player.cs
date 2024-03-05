@@ -6,16 +6,15 @@ using UnityEngine.InputSystem;
 public class Player : MonoBehaviour {
 
     private float vertical, horizontal, turnSmoothVelocity, originalHealth, originalMovementSpeed;
-    private bool canShoot = true, aiming = false, enableAiming = true, isDead=false, isLerpingDamage=false, deadFlag = false;
+    private bool canShoot = true, aiming = false, enableAiming = true, isDead=false, isLerpingDamage=false;
     private int selectedGun=0;
     private Rigidbody rb;
     [SerializeField] private float jumpPower, movementSpeed, jumpSmoothness, turnSmoothTime, maxMovementVelocity, currentHealth, healthIncrease;
-    [HideInInspector] public bool showAiming = false, dead=false;
+    [HideInInspector] public bool showAiming = false;
 
     public Transform groundCheck, cam, bulletHole;
     public LayerMask groundLayer;
-    public ParticleSystem particlesDeath;
-    public GameObject healthBar;
+    public GameObject healthBar, canvasDeath;
     private HealthBar scriptHealthBar;
     private MeshRenderer meshRenderer;
     private Color originalColor;
@@ -47,20 +46,13 @@ public class Player : MonoBehaviour {
             else
                 showAiming = false;
 
-            if (dead) {
-                if (!deadFlag) {
-                    deadFlag = true;
-                    playerDeath();
-                }
-            }
-
-
             //Detecções de botões:
             if (Input.GetKeyDown(KeyCode.R)) {    //Para trocar de arma
-                if (selectedGun == Globals.shotCoolDownGuns.Count - 1)
-                    selectedGun = 0;
-                else
-                    selectedGun++;
+                selectedGun = selectedGun == Globals.shotCoolDownGuns.Count - 1 ? 0 : selectedGun + 1;
+                if (selectedGun == (int)Globals.typesOfGuns.misteryGun) {
+                    if (!Globals.hasMisteryGun)
+                        selectedGun = selectedGun == Globals.shotCoolDownGuns.Count - 1 ? 0 : selectedGun + 1;
+                }
                 canShoot = true;
                 updateSelectedGun();
             }
@@ -160,8 +152,8 @@ public class Player : MonoBehaviour {
             meshRenderer.material.color = originalColor;
         }
         currentHealth -= damage;
-        dead = currentHealth <= 0 ? true : false;
-        scriptHealthBar.updateHealth(currentHealth, originalHealth, dead);
+        GameController.GetInstance().playerDead = currentHealth <= 0 ? true : false;
+        scriptHealthBar.updateHealth(currentHealth, originalHealth, GameController.GetInstance().playerDead);
         StartCoroutine(blinkDamage());
     }
 
@@ -184,23 +176,11 @@ public class Player : MonoBehaviour {
     }
 
     private void IncreaseHealth() {
-        if (!dead) {
+        if (currentHealth > 0) {
             if (currentHealth < originalHealth) {
                 currentHealth += healthIncrease;
                 scriptHealthBar.updateHealth(currentHealth, originalHealth, false);
             }
         }
-    }
-
-    private void playerDeath() {
-        gameObject.SetActive(false);
-        GameController.GetInstance().gamePaused = true;
-        ParticleSystem particles = Instantiate(particlesDeath, gameObject.transform.position, Quaternion.identity);
-        ParticleSystem.MainModule particlesMain = particles.main;
-        Color colorParticles = meshRenderer.material.color;
-        colorParticles.a = 1f;
-        particlesMain.startColor = colorParticles;
-        particles.gameObject.SetActive(true);
-        particles.Play();
     }
 }

@@ -4,7 +4,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 using UnityEngine;
 
 public class Globals : MonoBehaviour {
-    public static int idLanguage = 0, numCoins=0, levelPistol=0, levelSMG=0;
+    public static int idLanguage = 0, numCoins=0, levelPistol=0, levelSMG=0, recordEnemiesDefeated=0;
     public static float volumeOST = 1, volumeSFX = 1, pistolDamageTax=1, SMGDamageTax=1;
     public static bool hasMisteryGun = false;
 
@@ -24,7 +24,7 @@ public class Globals : MonoBehaviour {
     public static int priceMisteryGun = 500;
 
     public static Dictionary<int, float> levelsDamageTax = new Dictionary<int, float>() {    //Aqui estão as taxas de aumento de poder de cada upgrade
-        {0, 1.2f}, {1, 1.5f}, {2, 2f}
+        {0, 1f}, {1, 1.2f}, {2, 1.5f}, {3, 2f}
     };
 
     public static Dictionary<int, float> shotCoolDownGuns = new Dictionary<int, float>() {    //Este dicionário guardará o tempo de cool down entre os tiros de cada tipo de arma

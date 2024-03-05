@@ -2908,7 +2908,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 808432365}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.16588132, y: 0.000000008484001, z: -0.0000000014271089, w: 0.98614573}
+  m_LocalRotation: {x: 0.16588132, y: -0.000000008483999, z: 0.0000000014271085, w: 0.98614573}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -3835,15 +3835,14 @@ MonoBehaviour:
   currentHealth: 100
   healthIncrease: 0
   showAiming: 0
-  dead: 0
   groundCheck: {fileID: 688012623}
   cam: {fileID: 963194228}
   bulletHole: {fileID: 580419443}
   groundLayer:
     serializedVersion: 2
     m_Bits: 64
-  particlesDeath: {fileID: 2076172480}
   healthBar: {fileID: 105029118}
+  canvasDeath: {fileID: 832763089}
 --- !u!54 &1030921707
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -5941,7 +5940,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1632775213}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 5543177873686972223}
+        m_TargetAssemblyTypeName: GameController, Assembly-CSharp
+        m_MethodName: StartGame
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1632775213
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6228,7 +6239,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1745783689}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 5543177873686972223}
+        m_TargetAssemblyTypeName: GameController, Assembly-CSharp
+        m_MethodName: ReturnToMenu
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1745783689
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6519,7 +6542,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1823077068}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.1837914, y: -0.00000003275241, z: 0.0000000061239307, w: 0.9829653}
+  m_LocalRotation: {x: 0.1837914, y: -0.000000032752407, z: 0.00000000612393, w: 0.9829653}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -12451,6 +12474,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1616677386}
     - target: {fileID: 1678724836724091068, guid: 9092b872b7eeda347ab67e59f3f4ab7b, type: 3}
+      propertyPath: txtNewRecord
+      value: 
+      objectReference: {fileID: 2034287153}
+    - target: {fileID: 1678724836724091068, guid: 9092b872b7eeda347ab67e59f3f4ab7b, type: 3}
       propertyPath: canvasOptions
       value: 
       objectReference: {fileID: 1319178336}
@@ -12466,6 +12493,18 @@ PrefabInstance:
       propertyPath: playerTransform
       value: 
       objectReference: {fileID: 1030921698}
+    - target: {fileID: 1678724836724091068, guid: 9092b872b7eeda347ab67e59f3f4ab7b, type: 3}
+      propertyPath: canvasDeathPlayer
+      value: 
+      objectReference: {fileID: 832763089}
+    - target: {fileID: 1678724836724091068, guid: 9092b872b7eeda347ab67e59f3f4ab7b, type: 3}
+      propertyPath: particlesDeathPlayer
+      value: 
+      objectReference: {fileID: 2076172480}
+    - target: {fileID: 1678724836724091068, guid: 9092b872b7eeda347ab67e59f3f4ab7b, type: 3}
+      propertyPath: txtNumEnemiesDefeated
+      value: 
+      objectReference: {fileID: 2036026550}
     - target: {fileID: 1678724836724091068, guid: 9092b872b7eeda347ab67e59f3f4ab7b, type: 3}
       propertyPath: enemySpawnPoints.Array.data[0]
       value: 

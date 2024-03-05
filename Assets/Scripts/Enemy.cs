@@ -17,13 +17,11 @@ public class Enemy : MonoBehaviour {
     private MeshRenderer meshRenderer;
     private NavMeshAgent navMesh;
     private Color originalColor;
-    private Player playerScript;
 
     public GameObject healthBar;
     private HealthBar scriptHealthBar;
 
     private void Start() {
-        playerScript = playerTransform.gameObject.GetComponent<Player>();
         meshRenderer = GetComponent<MeshRenderer>();
         navMesh = GetComponent<NavMeshAgent>();
         scriptHealthBar = healthBar.GetComponent<HealthBar>();
@@ -39,7 +37,7 @@ public class Enemy : MonoBehaviour {
 
     private void Update() {
         if (!GameController.GetInstance().gamePaused) {
-            if (!playerScript.dead) {    //Se o jogador não tiver morrido
+            if (!GameController.GetInstance().playerDead) {    //Se o jogador não tiver morrido
                 navMesh.destination = playerTransform.position;
                 transform.LookAt(playerTransform.position);   //Fazendo o inimigo sempre olhar para o player
                 if ((gameObject.transform.position - playerTransform.position).magnitude <= distShootPlayer)
@@ -120,7 +118,8 @@ public class Enemy : MonoBehaviour {
         Destroy(gameObject);
         int amountCoins = (enemyType + 1) * GameController.GetInstance().coinsMultiplier;    //Calculando o número de moedas que o jogador ganhou ao matar o inimigo
         GameController.GetInstance().updateCoins(amountCoins);
-        GameController.GetInstance().numEnemies--;
+        GameController.GetInstance().numEnemiesSpawned--;
+        GameController.GetInstance().numEnemiesDefeated++;
         //Pontuação:
         Vector3 ptsPosition = gameObject.transform.position;
         ptsPosition.y += 2;   //Fazendo a pontuação aparecer um pouco acima do inimigo

@@ -1,4 +1,5 @@
 using Cinemachine;
+using System.Collections;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -7,17 +8,18 @@ using UnityEngine.UI;
 public class GameController : MonoBehaviour {
 
     [SerializeField] private int maxNumEnemies;
-    [SerializeField] private GameObject baseEnemy, canvasPause, canvasOptions, canvasUpgradesScreen, canvasUpgradePistolGroup, canvasUpgradeSMGGroup, canvasMisteryGunGroup;
+    [SerializeField] private GameObject baseEnemy, canvasPause, canvasOptions, canvasUpgradesScreen, canvasUpgradePistolGroup, canvasUpgradeSMGGroup, canvasMisteryGunGroup, canvasDeathPlayer;
+    [SerializeField] private ParticleSystem particlesDeathPlayer;
     [SerializeField] private TextMeshProUGUI[] txtsLang;
     private static GameController instance;
-    private bool isInGameScene = false, isInMenuScene = false;
+    private bool isInGameScene = false, isInMenuScene = false, playerDeadFlag=false;
 
     public Transform[] enemySpawnPoints;
     public Transform playerTransform;
-    public TextMeshProUGUI txtCoins;
+    public TextMeshProUGUI txtCoins, txtNumEnemiesDefeated, txtNewRecord;
     public CinemachineFreeLook camCinemachine;
-    [HideInInspector] public bool gamePaused = false;
-    [HideInInspector] public int numEnemies, coinsMultiplier = 1;
+    [HideInInspector] public bool gamePaused = false, playerDead = false;
+    [HideInInspector] public int numEnemiesSpawned, numEnemiesDefeated, coinsMultiplier = 1;
 
     public static GameController GetInstance() {
         return instance;
@@ -35,7 +37,8 @@ public class GameController : MonoBehaviour {
             isInGameScene = true;
             //Cursor.visible = false;   debug
             InvokeRepeating("spawnEnemy", 2f, 5f);
-            numEnemies = 0;
+            numEnemiesSpawned = 0;
+            numEnemiesDefeated = 0;
         }
         else if (SceneManager.GetActiveScene().name.ToLower().Contains("menu")) {
             isInMenuScene = true;
@@ -47,15 +50,14 @@ public class GameController : MonoBehaviour {
     private void Update() {
         if (Input.GetKeyDown(KeyCode.Escape)) {
             if (isInGameScene) {
-                gamePaused = !gamePaused;
-                if (gamePaused) {
-                    canvasPause.SetActive(true);
-                    camCinemachine.enabled = false;
-                }
-                else {
-                    canvasPause.SetActive(false);
-                    canvasOptions.SetActive(false);
-                    camCinemachine.enabled = true;
+                if (!playerDead) {
+                    gamePaused = !gamePaused;
+                    if (gamePaused)
+                        canvasPause.SetActive(true);
+                    else {
+                        canvasPause.SetActive(false);
+                        canvasOptions.SetActive(false);
+                    }
                 }
             }
             else {
@@ -67,11 +69,25 @@ public class GameController : MonoBehaviour {
                 }
             }
         }
+
+        if (isInGameScene) {
+            if (gamePaused)
+                camCinemachine.enabled = false;
+            else
+                camCinemachine.enabled = true;
+        }
+
+        if (playerDead) {
+            if (!playerDeadFlag) {
+                playerDeadFlag = true;
+                playerDeath();
+            }
+        }
     }
 
     private void spawnEnemy() {
         if (!gamePaused) {
-            if (numEnemies < maxNumEnemies) {
+            if (numEnemiesSpawned < maxNumEnemies) {
                 Vector3 spawnPoint = enemySpawnPoints[Random.Range(0, enemySpawnPoints.Length - 1)].position;
                 GameObject enemy = Instantiate(baseEnemy, spawnPoint, Quaternion.identity);
                 Enemy scriptEnemy = enemy.GetComponent<Enemy>();
@@ -79,7 +95,7 @@ public class GameController : MonoBehaviour {
                 scriptEnemy.enemyType = enemyType;
                 scriptEnemy.playerTransform = playerTransform;
                 enemy.SetActive(true);
-                numEnemies++;
+                numEnemiesSpawned++;
             }
         }
     }
@@ -88,6 +104,33 @@ public class GameController : MonoBehaviour {
         int currentAmount = int.Parse(txtCoins.text.Substring(1));
         int newAmount = currentAmount + amount;
         txtCoins.text = "X" + newAmount.ToString();
+    }
+
+    private void playerDeath() {
+        playerTransform.gameObject.SetActive(false);
+        gamePaused = true;
+        ParticleSystem particles = Instantiate(particlesDeathPlayer, playerTransform.position, Quaternion.identity);
+        ParticleSystem.MainModule particlesMain = particles.main;
+        Color colorParticles = playerTransform.GetComponent<MeshRenderer>().material.color;
+        colorParticles.a = 1f;
+        particlesMain.startColor = colorParticles;
+        particles.gameObject.SetActive(true);
+        particles.Play();
+        StartCoroutine(delayDeathPlayer());
+    }
+
+    public IEnumerator delayDeathPlayer() {
+        yield return new WaitForSeconds(2);
+        showPanelGameOver();
+    }
+
+    private void showPanelGameOver() {
+        txtNumEnemiesDefeated.text = numEnemiesDefeated.ToString();
+        if (numEnemiesDefeated > Globals.recordEnemiesDefeated) {
+            Globals.recordEnemiesDefeated = numEnemiesDefeated;
+            txtNewRecord.gameObject.SetActive(true);
+        }
+        canvasDeathPlayer.SetActive(true);
     }
 
 

@@ -6,7 +6,6 @@ public class HealthBar : MonoBehaviour {
     private bool barIsLerping = false;
     private RectTransform rectTransform, bgRectTransform;
     private Quaternion originalRotation;
-
     public GameObject creature;
 
     private void Start() {
@@ -39,7 +38,8 @@ public class HealthBar : MonoBehaviour {
     }
 
     private IEnumerator updateBar(float currentSize, float newSize, bool creatureDead = false) {
-        float timePassed = 0f, lerpDuration = 0.5f;
+        float timePassed = 0f;
+        float lerpDuration = creature.CompareTag("Player") ? 0.15f : 0.3f;
         newSize = creatureDead ? 0 : newSize;
         barIsLerping = true;
         if (newSize <= 0.1)
@@ -52,11 +52,5 @@ public class HealthBar : MonoBehaviour {
             yield return null;
         }
         barIsLerping = false;
-
-        if (creatureDead) {
-            if (creature.CompareTag("Player")) {
-                Debug.Log("jogador morreu!");
-            }
-        }
     }
 }
