@@ -6,7 +6,7 @@ using UnityEngine;
 public class Globals : MonoBehaviour {
     public static int idLanguage = 0, numCoins=0, levelPistol=0, levelSMG=0, recordEnemiesDefeated=0;
     public static float volumeOST = 1, volumeSFX = 1, pistolDamageTax=1, SMGDamageTax=1;
-    public static bool hasMisteryGun = false;
+    public static bool hasMisteryGun = true;
 
     //Essas informações não serão salvas e só servirão para definir certas coisas no jogo:
     public enum typesOfGuns {
@@ -14,6 +14,11 @@ public class Globals : MonoBehaviour {
         submachine,
         misteryGun,
         enemyGun,
+    }
+    public enum typesOfPowerUps {
+        life,
+        timesTwo,
+        velocity,
     }
     public enum languages {
         english,

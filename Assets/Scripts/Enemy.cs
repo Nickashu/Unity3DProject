@@ -115,7 +115,6 @@ public class Enemy : MonoBehaviour {
     }
 
     private void enemyDeath() {
-        Destroy(gameObject);
         int amountCoins = (enemyType + 1) * GameController.GetInstance().coinsMultiplier;    //Calculando o número de moedas que o jogador ganhou ao matar o inimigo
         GameController.GetInstance().updateCoins(amountCoins);
         GameController.GetInstance().numEnemiesSpawned--;
@@ -134,5 +133,10 @@ public class Enemy : MonoBehaviour {
         particlesMain.startColor = colorParticles;
         particles.gameObject.SetActive(true);
         particles.Play();
+        //Power-up:
+        Vector3 positionPowerUp = gameObject.transform.position;
+        positionPowerUp.y += 1;
+        PowerUpController.GetInstance().createPowerUp(positionPowerUp);
+        Destroy(gameObject);
     }
 }

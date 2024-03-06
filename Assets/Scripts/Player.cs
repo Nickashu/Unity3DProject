@@ -153,6 +153,16 @@ public class Player : MonoBehaviour {
         }
     }
 
+    private void OnTriggerEnter(Collider collider) {
+        if (!isDead) {
+            if (collider.gameObject.CompareTag("powerUp")) {
+                PowerUp powerUpScript = collider.gameObject.GetComponent<PowerUp>();
+                Debug.Log("Pegou power-up do tipo: " + Enum.GetName(typeof(Globals.typesOfPowerUps), powerUpScript.type));
+                Destroy(collider.gameObject);
+            }
+        }
+    }
+
     //Métodos referentes à dano e barra de vida:
     private void takeDamage(float damage) {
         if (isLerpingDamage) {

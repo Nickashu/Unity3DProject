@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 5756980787469149467}
   - component: {fileID: 2272705372710273397}
   - component: {fileID: 505172445107661168}
+  - component: {fileID: 4394880056177960958}
   - component: {fileID: 8900898127066738322}
   m_Layer: 0
   m_Name: powerUpModel
@@ -84,6 +85,21 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &4394880056177960958
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2116371050532123485}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 88ff8c4efbbaf1041b6b204629002824, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  type: 0
+  fadeTime: 2
+  lifeTime: 10
 --- !u!135 &8900898127066738322
 SphereCollider:
   m_ObjectHideFlags: 0

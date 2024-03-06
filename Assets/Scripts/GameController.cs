@@ -133,31 +133,6 @@ public class GameController : MonoBehaviour {
         canvasDeathPlayer.SetActive(true);
     }
 
-    private void updateLanguage(int idLang) {
-        Globals.idLanguage = idLang;
-        foreach (GameObject objLang in objsLang) {
-            if (objLang.GetComponent<TextMeshProUGUI>() != null) {
-                TextMeshProUGUI txtObj = objLang.GetComponent<TextMeshProUGUI>();
-                txtObj.text = Globals.dictLanguage[objLang.name][idLang];
-            }
-            else {
-                if(objLang.GetComponent<TMP_Dropdown>() != null) {
-                    TMP_Dropdown dropdown = objLang.GetComponent<TMP_Dropdown>();
-                    if (objLang.name == "dropdownLanguage") {
-                        for (int i = 0; i < dropdown.options.Count; i++) {
-                            if (i == (int)Globals.languages.english)
-                                dropdown.options[i].text = Globals.dictLanguage["langEnglish"][idLang];
-                            else if (i == (int)Globals.languages.portuguese)
-                                dropdown.options[i].text = Globals.dictLanguage["langPortuguese"][idLang];
-                        }
-                        dropdown.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = dropdown.options[dropdown.value].text;
-                    }
-                }
-            }
-        }
-    }
-
-
     //Métodos ativados com botões:
     public void StartGame() {
         TransitionController.GetInstance().LoadMainScene();
@@ -255,6 +230,30 @@ public class GameController : MonoBehaviour {
             Color newColorCheck = btnUpgrade.transform.parent.transform.GetChild(0).GetComponent<Image>().color;
             newColorCheck.a = 1;
             btnUpgrade.transform.parent.transform.GetChild(0).GetComponent<Image>().color = newColorCheck;
+        }
+    }
+
+    private void updateLanguage(int idLang) {
+        Globals.idLanguage = idLang;
+        foreach (GameObject objLang in objsLang) {
+            if (objLang.GetComponent<TextMeshProUGUI>() != null) {
+                TextMeshProUGUI txtObj = objLang.GetComponent<TextMeshProUGUI>();
+                txtObj.text = Globals.dictLanguage[objLang.name][idLang];
+            }
+            else {
+                if (objLang.GetComponent<TMP_Dropdown>() != null) {
+                    TMP_Dropdown dropdown = objLang.GetComponent<TMP_Dropdown>();
+                    if (objLang.name == "dropdownLanguage") {
+                        for (int i = 0; i < dropdown.options.Count; i++) {
+                            if (i == (int)Globals.languages.english)
+                                dropdown.options[i].text = Globals.dictLanguage["langEnglish"][idLang];
+                            else if (i == (int)Globals.languages.portuguese)
+                                dropdown.options[i].text = Globals.dictLanguage["langPortuguese"][idLang];
+                        }
+                        dropdown.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = dropdown.options[dropdown.value].text;
+                    }
+                }
+            }
         }
     }
 }
