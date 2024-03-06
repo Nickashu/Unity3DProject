@@ -15,6 +15,11 @@ public class Globals : MonoBehaviour {
         misteryGun,
         enemyGun,
     }
+    public enum languages {
+        english,
+        portuguese,
+    }
+
     public static Dictionary<int, int> upgradePricesPistol = new Dictionary<int, int>() {
         {0, 10}, {1, 30}, {2, 50}
     };
@@ -39,10 +44,30 @@ public class Globals : MonoBehaviour {
         {(int)typesOfGuns.misteryGun, 100f }
     };
 
+    
+    public static Dictionary<string, string[]> dictLanguage = new Dictionary<string, string[]> {
+        {"txtStart", new string[] {"Start", "Começar"} },
+        {"txtResume", new string[] {"Resume", "Continuar"} },
+        {"txtQuit", new string[] {"Quit", "Sair"} },
+        {"txtReset", new string[] {"Reset", "Recomeçar"} },
+        {"txtOptions", new string[] {"Options", "Opções"} },
+        //{"txtControls", new string[] {"Controls", "Controles" } },
+        {"txtLang", new string[] {"Language", "Idioma" } },
+        {"txtOST", new string[] {"Music", "Música" } },
+        {"txtSFX", new string[] {"Sound Effects", "Efeitos Sonoros" } },
+        {"txtNewRecord", new string[] {"New Record!!", "Novo Recorde!!" } },
+        {"txtEnemies", new string[] {"Enemies defeated:", "Inimigos derrotados:" } },
+        {"txtPistol", new string[] {"Pistol", "Pistola" } },
+        {"txtSMG", new string[] {"SMG", "Metralhadora" } },
+        {"txtMisteryGun", new string[] {"Mistery Gun", "Arma Misteriosa" } },
+        {"langEnglish", new string[] {"English", "Inglês" } },
+        {"langPortuguese", new string[] {"Portuguese", "Português" } },
+    };
 
+    //Métodos para salvar/carregar dados
     public static void SaveData() {
         string path = Application.persistentDataPath + "/globals.bin";
-        ConfigsData data = new ConfigsData(idLanguage, volumeOST, volumeSFX);
+        ConfigsData data = new ConfigsData(idLanguage, numCoins, levelPistol, levelSMG, recordEnemiesDefeated, pistolDamageTax, SMGDamageTax, volumeOST, volumeSFX, hasMisteryGun);
         BinaryFormatter formatter = new BinaryFormatter();
         FileStream fileStream = new FileStream(path, FileMode.Create);
 
@@ -50,7 +75,7 @@ public class Globals : MonoBehaviour {
         fileStream.Close();
     }
 
-    public static ConfigsData LoadData() {
+    public static void LoadData() {
         string path = Application.persistentDataPath + "/globals.bin";
         if (File.Exists(path)) {   //Se o arquivo existir
             BinaryFormatter formatter = new BinaryFormatter();
@@ -59,42 +84,52 @@ public class Globals : MonoBehaviour {
             ConfigsData data = formatter.Deserialize(fileStream) as ConfigsData;
             fileStream.Close();
 
-            return data;
-        }
+            idLanguage = data.idLanguage;
+            numCoins = data.numCoins;
+            levelPistol = data.levelPistol;
+            levelSMG = data.levelSMG;
+            recordEnemiesDefeated = data.recordEnemiesDefeated;
+            pistolDamageTax = data.pistolDamageTax;
+            SMGDamageTax = data.SMGDamageTax;
+            volumeOST = data.volumeOST;
+            volumeSFX = data.volumeSFX;
+            hasMisteryGun = data.hasMisteryGun;
 
-        return null;
+            Debug.Log("Dados carregados com sucesso!");
+        }
     }
 
     public static void ResetData() {
-        /*
-        dificuldade = 1;
-        indexPersonagemSelecionado = 1;
-        numMoedas = 0;
-        highScoreFacil = 0;
-        highScorePadrao = 0;
-        highScoreHardcore = 0;
-        isCompradoPersonagens = new Dictionary<string, bool>() {
-            {"frog", false}, {"pinkGuy", true}, {"virtualGuy", false}, {"maskDude", false}
-        };
-        */
         idLanguage = 0;
+        numCoins = 0;
+        levelPistol = 0;
+        levelSMG = 0;
+        recordEnemiesDefeated = 0;
+        pistolDamageTax = 1;
+        SMGDamageTax = 1;
+        hasMisteryGun = false;
 
-        Debug.Log("Dados zerados");
         SaveData();
-        //GameController.LoadInicial();
+        LoadData();
+        Debug.Log("Dados zerados com sucesso!");
     }
 }
 
 public class ConfigsData {
-    public int idLanguage, numCoins;
-    public float volumeOST, volumeSFX;
-    //public Dictionary<string, bool> isCompradoPersonagens = new Dictionary<string, bool>() {
-    //    {"frog", false}, {"pinkGuy", true}, {"virtualGuy", false}, {"maskDude", false}
-    //};
+    public int idLanguage, numCoins, levelPistol, levelSMG, recordEnemiesDefeated;
+    public float volumeOST, volumeSFX, pistolDamageTax, SMGDamageTax;
+    public bool hasMisteryGun;
 
-    public ConfigsData(int idLanguage, float volumeOST, float volumeSFX) {
+    public ConfigsData(int idLanguage, int numCoins, int levelPistol, int levelSMG, int recordEnemiesDefeated, float pistolDamageTax, float SMGDamageTax, float volumeOST, float volumeSFX, bool hasMisteryGun) {
         this.idLanguage = idLanguage;
+        this.numCoins = numCoins;
+        this.levelPistol = levelPistol;
+        this.levelSMG = levelSMG;
+        this.recordEnemiesDefeated = recordEnemiesDefeated;
+        this.pistolDamageTax = pistolDamageTax;
+        this.SMGDamageTax = SMGDamageTax;
         this.volumeOST = volumeOST;
         this.volumeSFX = volumeSFX;
+        this.hasMisteryGun = hasMisteryGun;
     }
 }

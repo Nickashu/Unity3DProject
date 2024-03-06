@@ -5,7 +5,7 @@ using UnityEngine.InputSystem;
 
 public class Player : MonoBehaviour {
 
-    private float vertical, horizontal, turnSmoothVelocity, originalHealth, originalMovementSpeed;
+    private float vertical, horizontal, turnSmoothVelocity, originalHealth, originalMovementSpeed, heightWithoutAim;
     private bool canShoot = true, aiming = false, enableAiming = true, isDead=false, isLerpingDamage=false;
     private int selectedGun=0;
     private Rigidbody rb;
@@ -32,13 +32,19 @@ public class Player : MonoBehaviour {
     private void Update() {
         if (!GameController.GetInstance().gamePaused) {    //Se o jogo não estiver pausado
             aiming = Input.GetKey(KeyCode.Mouse1);
-            if (aiming)
-                movementSpeed = originalMovementSpeed * 0.7f;
+            if (aiming) {
+                transform.rotation = Quaternion.Euler(transform.rotation.x, cam.transform.eulerAngles.y, transform.rotation.z);
+                movementSpeed = 0;
+                Vector3 newPos = transform.position;
+                newPos.y = heightWithoutAim;
+                transform.position = newPos;
+            }
             else {   //Só poderá correr se não estiver mirando
                 if (Input.GetKey(KeyCode.LeftShift))
                     movementSpeed = originalMovementSpeed * 1.5f;
                 else
                     movementSpeed = originalMovementSpeed;
+                heightWithoutAim = transform.position.y;
             }
 
             if (aiming && enableAiming)
@@ -94,11 +100,13 @@ public class Player : MonoBehaviour {
 
     public void SetMovement(InputAction.CallbackContext value) {
         if (!GameController.GetInstance().gamePaused) {
-            horizontal = value.ReadValue<Vector3>().x;
-            vertical = value.ReadValue<Vector3>().z;
-            if (value.canceled) {    //Se o evento for cancelado
-                horizontal = 0;
-                vertical = 0;
+            if (!aiming) {
+                horizontal = value.ReadValue<Vector3>().x;
+                vertical = value.ReadValue<Vector3>().z;
+                if (value.canceled) {    //Se o evento for cancelado
+                    horizontal = 0;
+                    vertical = 0;
+                }
             }
         }
     }
