@@ -4,9 +4,9 @@ using System.Runtime.Serialization.Formatters.Binary;
 using UnityEngine;
 
 public class Globals : MonoBehaviour {
-    public static int idLanguage = 0, numCoins=0, levelPistol=0, levelSMG=0, recordEnemiesDefeated=0;
+    public static int idLanguage = 0, numCoins=1000, levelPistol=0, levelSMG=0, recordEnemiesDefeated=0, camSensitivity=100;
     public static float volumeOST = 1, volumeSFX = 1, pistolDamageTax=1, SMGDamageTax=1;
-    public static bool hasMisteryGun = true;
+    public static bool hasMisteryGun = false;
 
     //Essas informações não serão salvas e só servirão para definir certas coisas no jogo:
     public enum typesOfGuns {
@@ -65,6 +65,7 @@ public class Globals : MonoBehaviour {
         {"txtPistol", new string[] {"Pistol", "Pistola" } },
         {"txtSMG", new string[] {"SMG", "Metralhadora" } },
         {"txtMisteryGun", new string[] {"Mistery Gun", "Arma Misteriosa" } },
+        {"txtSensitivity", new string[] {"Cam Sensitivity", "Sensibilidade da Câmera" } },
         {"langEnglish", new string[] {"English", "Inglês" } },
         {"langPortuguese", new string[] {"Portuguese", "Português" } },
     };

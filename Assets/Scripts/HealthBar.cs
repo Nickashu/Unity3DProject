@@ -38,6 +38,9 @@ public class HealthBar : MonoBehaviour {
     }
 
     private IEnumerator updateBar(float currentSize, float newSize, bool creatureDead = false) {
+        if (creatureDead) {
+            Debug.Log("ataulizando vida na morte!");
+        }
         float timePassed = 0f;
         float lerpDuration = creature.CompareTag("Player") ? 0.15f : 0.3f;
         newSize = creatureDead ? 0 : newSize;

@@ -10,6 +10,7 @@ public class GameController : MonoBehaviour {
     [SerializeField] private int maxNumEnemies;
     [SerializeField] private GameObject baseEnemy, canvasPause, canvasOptions, canvasUpgradesScreen, canvasUpgradePistolGroup, canvasUpgradeSMGGroup, canvasMisteryGunGroup, canvasDeathPlayer;
     [SerializeField] private GameObject[] objsLang;
+    [SerializeField] private Slider OSTVolumeSlider, SFXVolumeSlider, sensitivitySlider;
     [SerializeField] private ParticleSystem particlesDeathPlayer;
     private static GameController instance;
     private bool isInGameScene = false, isInMenuScene = false, playerDeadFlag=false;
@@ -49,7 +50,25 @@ public class GameController : MonoBehaviour {
             isInMenuScene = true;
             manageUpgrades();
         }
+        updateCoins();   //Atualizando o texto do número de moedas
         updateLanguage(Globals.idLanguage);
+        updateConfigs();
+
+        if (sensitivitySlider != null) {   //Se 1 slider estiver ativo, os outros também estarão
+            sensitivitySlider.value = Globals.camSensitivity;
+            OSTVolumeSlider.value = Globals.volumeOST;
+            SFXVolumeSlider.value = Globals.volumeSFX;
+            sensitivitySlider.onValueChanged.AddListener((newValue) => {
+                Globals.camSensitivity = (int)newValue;
+                Debug.Log("Sensibilidade mudou para: " + newValue);
+            });
+            OSTVolumeSlider.onValueChanged.AddListener((newValue) => {
+                Globals.volumeOST = newValue;
+            });
+            OSTVolumeSlider.onValueChanged.AddListener((newValue) => {
+                Globals.volumeSFX = newValue;
+            });
+        }
     }
 
     private void Update() {
@@ -60,8 +79,8 @@ public class GameController : MonoBehaviour {
                     if (gamePaused)
                         canvasPause.SetActive(true);
                     else {
+                        ExitOptions();
                         canvasPause.SetActive(false);
-                        canvasOptions.SetActive(false);
                     }
                 }
             }
@@ -105,10 +124,9 @@ public class GameController : MonoBehaviour {
         }
     }
 
-    public void updateCoins(int amount) {
-        int currentAmount = int.Parse(txtCoins.text.Substring(1));
-        int newAmount = currentAmount + amount;
-        txtCoins.text = "X" + newAmount.ToString();
+    public void updateCoins() {
+        if(txtCoins != null)
+            txtCoins.text = "X" + Globals.numCoins.ToString();
     }
 
     private void playerDeath() {
@@ -150,6 +168,7 @@ public class GameController : MonoBehaviour {
     }
     public void ExitOptions() {
         canvasOptions.SetActive(false);
+        updateConfigs();
     }
     public void Upgrades() {
         canvasUpgradesScreen.SetActive(true);
@@ -162,29 +181,37 @@ public class GameController : MonoBehaviour {
         canvasOptions.SetActive(false);
     }
     public void ReturnToMenu() {
-        Debug.Log("Voltando para o menu!!");
         TransitionController.GetInstance().LoadMenu();
     }
     public void BuyUpgrade(GameObject sectionUpgrade) {
         int level = 0, maxLevels=0;
-        if (sectionUpgrade.CompareTag("pistolUpgrade")) {
-            level = int.Parse(sectionUpgrade.name);
-            maxLevels = Globals.upgradePricesPistol.Count;
-            Globals.levelPistol++;
-        }
-        else if (sectionUpgrade.CompareTag("SMGUpgrade")) {
-            level = int.Parse(sectionUpgrade.name);
-            maxLevels = Globals.upgradePricesSMG.Count;
-            Globals.levelSMG++;
+        int requiredCoins = int.Parse(sectionUpgrade.transform.GetChild(1).GetChild(1).GetComponent<TextMeshProUGUI>().text.Substring(1));
+        bool hasCoins = Globals.numCoins >= requiredCoins ? true : false;
+
+        if (hasCoins) {    //Se tiver moedas o suficiente
+            if (sectionUpgrade.CompareTag("pistolUpgrade")) {
+                maxLevels = Globals.upgradePricesPistol.Count;
+                level = int.Parse(sectionUpgrade.name);
+                Globals.levelPistol++;
+            }
+            else if (sectionUpgrade.CompareTag("SMGUpgrade")) {
+                maxLevels = Globals.upgradePricesSMG.Count;
+                level = int.Parse(sectionUpgrade.name);
+                Globals.levelSMG++;
+            }
+            else
+                Globals.hasMisteryGun = true;
+
+            disableSectionUpgrade(sectionUpgrade, true);
+            if (level < maxLevels) {
+                GameObject newSection = sectionUpgrade.transform.parent.GetChild(sectionUpgrade.transform.GetSiblingIndex() + 1).gameObject;    //Pegando a próxima seção de upgrade
+                enableSectionUpgrade(newSection);
+            }
+            Globals.numCoins -= requiredCoins;    //Diminuindo o número de moedas após a compra
+            updateCoins();
         }
         else
-            Globals.hasMisteryGun = true;
-
-        disableSectionUpgrade(sectionUpgrade, true);
-        if (level < maxLevels) {
-            GameObject newSection = sectionUpgrade.transform.parent.GetChild(sectionUpgrade.transform.GetSiblingIndex() + 1).gameObject;    //Pegando a próxima seção de upgrade
-            enableSectionUpgrade(newSection);
-        }
+            Debug.Log("Sem moedas o suficiente!!!");
     }
     public void ChangeLanguage(int newIdLang) {
         updateLanguage(newIdLang);
@@ -236,6 +263,12 @@ public class GameController : MonoBehaviour {
             newColorCheck.a = 1;
             btnUpgrade.transform.parent.transform.GetChild(0).GetComponent<Image>().color = newColorCheck;
         }
+    }
+
+    private void updateConfigs() {
+        if (camCinemachine != null)
+            camCinemachine.m_XAxis.m_MaxSpeed = Globals.camSensitivity;
+        //SoundController.GetInstance().ChangeVolumes();
     }
 
     private void updateLanguage(int idLang) {
