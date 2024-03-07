@@ -10,6 +10,8 @@ public class PowerUp : MonoBehaviour {
     private void Start() {
         StartCoroutine(timeToFade());
         StartCoroutine(timeToDestroy());
+        Color initialColor = new Color(GetComponent<MeshRenderer>().material.color.r, GetComponent<MeshRenderer>().material.color.g, GetComponent<MeshRenderer>().material.color.b, 1f);
+        GetComponent<MeshRenderer>().material.color = initialColor;
         originalColor = GetComponent<MeshRenderer>().material.color;
     }
 
@@ -31,7 +33,7 @@ public class PowerUp : MonoBehaviour {
     }
 
     private IEnumerator fade(bool fadeOutArg) {
-        float timePassed = 0f, fadeDuration=0.5f;
+        float timePassed = 0f, fadeDuration=1f;
         while (timePassed < fadeDuration) {
             float t = timePassed / fadeDuration, fadeValue=0;
             Color colorPowerUp = gameObject.GetComponent<MeshRenderer>().material.color;

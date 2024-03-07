@@ -44,12 +44,31 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c95c6f7778c05854685f6ef3faf5c24c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gamePaused: 0
   maxNumEnemies: 5
+  baseEnemy: {fileID: 0}
+  canvasPause: {fileID: 0}
+  canvasOptions: {fileID: 0}
+  canvasUpgradesScreen: {fileID: 0}
+  canvasUpgradePistolGroup: {fileID: 0}
+  canvasUpgradeSMGGroup: {fileID: 0}
+  canvasMisteryGunGroup: {fileID: 0}
+  canvasDeathPlayer: {fileID: 0}
+  objsLang: []
+  particlesDeathPlayer: {fileID: 0}
   enemySpawnPoints:
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
   playerTransform: {fileID: 0}
-  baseEnemy: {fileID: 0}
+  txtCoins: {fileID: 0}
+  txtNumEnemiesDefeated: {fileID: 0}
+  txtNewRecord: {fileID: 0}
+  camCinemachine: {fileID: 0}
+  baseCoinsMultiplier: 1
+  powerUpTime: 10
+  gamePaused: 0
+  playerDead: 0
+  numEnemiesSpawned: 0
+  numEnemiesDefeated: 0
+  coinsMultiplier: 0

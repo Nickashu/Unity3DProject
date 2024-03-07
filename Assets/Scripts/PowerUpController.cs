@@ -35,10 +35,7 @@ public class PowerUpController : MonoBehaviour {
             powerUp.GetComponent<MeshRenderer>().material.color = chosenPowerUp.color;
             powerUp.GetComponent<PowerUp>().type = chosenPowerUp.type;
             powerUpSection.SetActive(true);
-            Debug.Log("Power-up do tipo: " + Enum.GetName(typeof(Globals.typesOfPowerUps), chosenPowerUp.type) + " foi criado!");
         }
-        else 
-            Debug.Log("Não spawnou power-up!");
 
     }
 }

@@ -18,8 +18,12 @@ public class GameController : MonoBehaviour {
     public Transform playerTransform;
     public TextMeshProUGUI txtCoins, txtNumEnemiesDefeated, txtNewRecord;
     public CinemachineFreeLook camCinemachine;
+    public int baseCoinsMultiplier;
+    public float powerUpTime;
     [HideInInspector] public bool gamePaused = false, playerDead = false;
-    [HideInInspector] public int numEnemiesSpawned, numEnemiesDefeated, coinsMultiplier = 1;
+    [HideInInspector] public int numEnemiesSpawned, numEnemiesDefeated, coinsMultiplier;
+
+
 
     public static GameController GetInstance() {
         return instance;
@@ -33,6 +37,7 @@ public class GameController : MonoBehaviour {
     }
 
     private void Start() {
+        coinsMultiplier = baseCoinsMultiplier;
         if (SceneManager.GetActiveScene().name.ToLower().Contains("main")) {
             isInGameScene = true;
             //Cursor.visible = false;   debug

@@ -1,31 +1,36 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class Player : MonoBehaviour {
 
-    private float vertical, horizontal, turnSmoothVelocity, originalHealth, originalMovementSpeed, heightWithoutAim;
+    private float vertical, horizontal, turnSmoothVelocity, originalHealth, originalMovementSpeed, originalMovementSpeedBoost, referenceOriginalSpeed, heightWithoutAim;
     private bool canShoot = true, aiming = false, enableAiming = true, isDead=false, isLerpingDamage=false;
+    private bool powerUpVelocity = false, powerUpTimesTwo = false;   //Essas variáveis manterão os estados dos power-ups
     private int selectedGun=0;
     private Rigidbody rb;
-    [SerializeField] private float jumpPower, movementSpeed, jumpSmoothness, turnSmoothTime, maxMovementVelocity, currentHealth, healthIncrease;
-    [HideInInspector] public bool showAiming = false;
-
-    public Transform groundCheck, cam, bulletHole;
-    public LayerMask groundLayer;
-    public GameObject healthBar, canvasDeath;
     private HealthBar scriptHealthBar;
     private MeshRenderer meshRenderer;
     private Color originalColor;
+    private Queue<bool> queuePowerUpVelocity = new Queue<bool>(), queuePowerUpTimesTwo = new Queue<bool>();   //Estas filas serão usadas na lógica dos power-ups
+    [SerializeField] private float jumpPower, movementSpeed, jumpSmoothness, turnSmoothTime, maxMovementVelocity, currentHealth, healthIncrease;
+
+    [HideInInspector] public bool showAiming = false;
+    public Transform groundCheck, cam, bulletHole;
+    public LayerMask groundLayer;
+    public GameObject healthBar, canvasDeath, iconPowerUpVelocity, iconPowerUpTimesTwo;
 
     private void Start() {
         rb = GetComponent<Rigidbody>();
         originalMovementSpeed = movementSpeed;
+        originalMovementSpeedBoost = originalMovementSpeed * 2;
         scriptHealthBar = healthBar.GetComponent<HealthBar>();
         originalHealth = currentHealth;
         meshRenderer = gameObject.GetComponent<MeshRenderer>();
         originalColor = meshRenderer.material.color;
+        updatePowerUps();
         InvokeRepeating("IncreaseHealth", 0f, 1f);   //A vida do jogador aumentará constantemente
     }
 
@@ -41,9 +46,9 @@ public class Player : MonoBehaviour {
             }
             else {   //Só poderá correr se não estiver mirando
                 if (Input.GetKey(KeyCode.LeftShift))
-                    movementSpeed = originalMovementSpeed * 1.5f;
+                    movementSpeed = referenceOriginalSpeed * 1.5f;
                 else
-                    movementSpeed = originalMovementSpeed;
+                    movementSpeed = referenceOriginalSpeed;
                 heightWithoutAim = transform.position.y;
             }
 
@@ -158,9 +163,46 @@ public class Player : MonoBehaviour {
             if (collider.gameObject.CompareTag("powerUp")) {
                 PowerUp powerUpScript = collider.gameObject.GetComponent<PowerUp>();
                 Debug.Log("Pegou power-up do tipo: " + Enum.GetName(typeof(Globals.typesOfPowerUps), powerUpScript.type));
+                collectPowerUp(powerUpScript.type);
                 Destroy(collider.gameObject);
             }
         }
+    }
+
+    //Métodos para controlar power-ups:
+    private void collectPowerUp(int powerUpType) {
+        switch(powerUpType) {
+            case (int)Globals.typesOfPowerUps.life:
+                currentHealth += 20f;
+                updateHealthBar();
+                break;
+            case (int)Globals.typesOfPowerUps.velocity:
+                StartCoroutine(activatePowerUp(queuePowerUpVelocity));
+                break;
+            case (int)Globals.typesOfPowerUps.timesTwo:
+                StartCoroutine(activatePowerUp(queuePowerUpTimesTwo));
+                break;
+        }
+    }
+
+    private IEnumerator activatePowerUp(Queue<bool> queuePowerUp) {
+        Debug.Log("Tamanho das filas: Velocity: " + queuePowerUpVelocity.Count + "    TimesTwo: " + queuePowerUpTimesTwo.Count);
+        queuePowerUp.Enqueue(true);
+        updatePowerUps();
+        yield return new WaitForSeconds(GameController.GetInstance().powerUpTime);
+        Debug.Log("Tempo de um power-up acabou!");
+        queuePowerUp.Dequeue();
+        updatePowerUps();
+        Debug.Log("Tamanho das filas: Velocity: " + queuePowerUpVelocity.Count + "    TimesTwo: " + queuePowerUpTimesTwo.Count);
+    }
+
+    private void updatePowerUps() {
+        powerUpVelocity = queuePowerUpVelocity.Count > 0 ? true : false;
+        powerUpTimesTwo = queuePowerUpTimesTwo.Count > 0 ? true : false;
+        referenceOriginalSpeed = powerUpVelocity ? originalMovementSpeedBoost : originalMovementSpeed;
+        GameController.GetInstance().coinsMultiplier = powerUpTimesTwo ? GameController.GetInstance().baseCoinsMultiplier * 2 : GameController.GetInstance().baseCoinsMultiplier;
+        iconPowerUpVelocity.SetActive(powerUpVelocity);
+        iconPowerUpTimesTwo.SetActive(powerUpTimesTwo);
     }
 
     //Métodos referentes à dano e barra de vida:
@@ -171,8 +213,11 @@ public class Player : MonoBehaviour {
         }
         currentHealth -= damage;
         GameController.GetInstance().playerDead = currentHealth <= 0 ? true : false;
-        scriptHealthBar.updateHealth(currentHealth, originalHealth, GameController.GetInstance().playerDead);
+        updateHealthBar();
         StartCoroutine(blinkDamage());
+    }
+    private void updateHealthBar() {
+        scriptHealthBar.updateHealth(currentHealth, originalHealth, GameController.GetInstance().playerDead);
     }
 
     private IEnumerator blinkDamage() {
