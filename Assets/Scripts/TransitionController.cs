@@ -23,10 +23,8 @@ public class TransitionController : MonoBehaviour {
     private void Start() {
         animTransitionScenes = bgTransitions.GetComponent<Animator>();
         if (SceneManager.GetActiveScene().name.ToLower().Contains("menu")) {
-            if (!Globals.firstScene) {
-                //SoundController.GetInstance().ChangeVolumes();
+            if (!Globals.firstScene)
                 animTransitionScenes.SetBool("fadeOut", true);
-            }
         }
         else
             animTransitionScenes.SetTrigger("fadeOut");
@@ -38,15 +36,15 @@ public class TransitionController : MonoBehaviour {
         else
             Globals.SaveData();
 
-        //playSceneMusic();
+        playSceneMusic();
     }
 
-    //private void playSceneMusic() {
-    //    if (SceneManager.GetActiveScene().name.Contains("Menu"))
-    //        SoundController.GetInstance().PlaySound("OST_menu", null);
-    //    else
-    //        SoundController.GetInstance().PlaySound("OST_level", null);
-    //}
+    private void playSceneMusic() {
+        if (SceneManager.GetActiveScene().name.ToLower().Contains("menu"))
+            SoundController.GetInstance().PlaySound("OST_menu", null);
+        else
+            SoundController.GetInstance().PlaySound("OST_level", null);
+    }
 
     public void LoadNextScene() {
         if (SceneManager.GetActiveScene().buildIndex == SceneManager.sceneCountInBuildSettings - 1) {

@@ -63,7 +63,7 @@ public class Globals : MonoBehaviour {
         {"txtQuit", new string[] {"Quit", "Sair"} },
         {"txtReset", new string[] {"Reset", "Recomeçar"} },
         {"txtOptions", new string[] {"Options", "Opções"} },
-        //{"txtControls", new string[] {"Controls", "Controles" } },
+        {"txtControls", new string[] {"Controls", "Controles" } },
         {"txtLang", new string[] {"Language", "Idioma" } },
         {"txtOST", new string[] {"Music", "Música" } },
         {"txtSFX", new string[] {"Sound Effects", "Efeitos Sonoros" } },
@@ -76,6 +76,15 @@ public class Globals : MonoBehaviour {
         {"txtResetSave", new string[] {"Reset Data", "Resetar Dados" } },
         {"langEnglish", new string[] {"English", "Inglês" } },
         {"langPortuguese", new string[] {"Portuguese", "Português" } },
+        {"txtControlJump", new string[] {"Jump", "Pular" } },
+        {"txtControlRun", new string[] {"Run", "Correr" } },
+        {"txtControlWalk", new string[] {"Walk", "Andar" } },
+        {"txtControlShoot", new string[] {"Shoot", "Atirar" } },
+        {"txtControlAim", new string[] {"Aim", "Mirar" } },
+        {"txtControlPause", new string[] {"Pause", "Pausar" } },
+        {"txtControlChangeWeapon", new string[] {"Change weapon", "Trocar arma" } },
+        {"txtUpgradeVelocity", new string[] {"Speed boost", "Aumento de velocidade" } },
+        {"txtUpgradeTimesTwo", new string[] {"Double coins", "Moedas em dobro" } },
     };
 
     //Métodos para salvar/carregar dados

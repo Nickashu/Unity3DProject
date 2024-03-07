@@ -8,7 +8,7 @@ using UnityEngine.UI;
 public class GameController : MonoBehaviour {
 
     [SerializeField] private int maxNumEnemies;
-    [SerializeField] private GameObject baseEnemy, canvasPause, canvasOptions, canvasUpgradesScreen, canvasUpgradePistolGroup, canvasUpgradeSMGGroup, canvasMisteryGunGroup, canvasDeathPlayer;
+    [SerializeField] private GameObject baseEnemy, canvasPause, canvasOptions, canvasControls, canvasUpgradesScreen, canvasUpgradePistolGroup, canvasUpgradeSMGGroup, canvasMisteryGunGroup, canvasDeathPlayer;
     [SerializeField] private GameObject[] objsLang;
     [SerializeField] private Slider OSTVolumeSlider, SFXVolumeSlider, sensitivitySlider;
     [SerializeField] private ParticleSystem particlesDeathPlayer;
@@ -80,6 +80,7 @@ public class GameController : MonoBehaviour {
                         canvasPause.SetActive(true);
                     else {
                         ExitOptions();
+                        ExitControls();
                         canvasPause.SetActive(false);
                     }
                 }
@@ -88,6 +89,8 @@ public class GameController : MonoBehaviour {
                 if (isInMenuScene) {
                     if (canvasOptions.activeSelf)
                         canvasOptions.SetActive(false);
+                    if (canvasControls.activeSelf)
+                        canvasControls.SetActive(false);
                     if (canvasUpgradesScreen.activeSelf)
                         canvasUpgradesScreen.SetActive(false);
                 }
@@ -192,6 +195,12 @@ public class GameController : MonoBehaviour {
         Globals.SaveData();
         updateConfigs();
     }
+    public void Controls() {
+        canvasControls.SetActive(true);
+    }
+    public void ExitControls() {
+        canvasControls.SetActive(false);
+    }
     public void Upgrades() {
         canvasUpgradesScreen.SetActive(true);
     }
@@ -294,7 +303,7 @@ public class GameController : MonoBehaviour {
     private void updateConfigs() {
         if (camCinemachine != null)
             camCinemachine.m_XAxis.m_MaxSpeed = Globals.camSensitivity;
-        //SoundController.GetInstance().ChangeVolumes();
+        SoundController.GetInstance().ChangeVolumes();
     }
 
     private void updateLanguage(int idLang) {
