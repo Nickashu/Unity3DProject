@@ -12,6 +12,7 @@ public class GameController : MonoBehaviour {
     [SerializeField] private GameObject[] objsLang;
     [SerializeField] private Slider OSTVolumeSlider, SFXVolumeSlider, sensitivitySlider;
     [SerializeField] private ParticleSystem particlesDeathPlayer;
+    [SerializeField] private EnemyObject[] enemiesConfig;
     private static GameController instance;
     private bool isInGameScene = false, isInMenuScene = false, playerDeadFlag=false;
 
@@ -60,7 +61,6 @@ public class GameController : MonoBehaviour {
             SFXVolumeSlider.value = Globals.volumeSFX;
             sensitivitySlider.onValueChanged.AddListener((newValue) => {
                 Globals.camSensitivity = (int)newValue;
-                Debug.Log("Sensibilidade mudou para: " + newValue);
             });
             OSTVolumeSlider.onValueChanged.AddListener((newValue) => {
                 Globals.volumeOST = newValue;
@@ -112,14 +112,30 @@ public class GameController : MonoBehaviour {
     private void spawnEnemy() {
         if (!gamePaused) {
             if (numEnemiesSpawned < maxNumEnemies) {
-                Vector3 spawnPoint = enemySpawnPoints[Random.Range(0, enemySpawnPoints.Length - 1)].position;
-                GameObject enemy = Instantiate(baseEnemy, spawnPoint, Quaternion.identity);
-                Enemy scriptEnemy = enemy.GetComponent<Enemy>();
-                int enemyType = Random.Range(0, scriptEnemy.enemyConfigs.Length);
-                scriptEnemy.enemyType = enemyType;
-                scriptEnemy.playerTransform = playerTransform;
-                enemy.SetActive(true);
-                numEnemiesSpawned++;
+                EnemyObject chosenEnemyType = null;
+                int rand = UnityEngine.Random.Range(1, 101);
+                int minRarity = 101;
+                foreach (EnemyObject enemyObject in enemiesConfig) {
+                    if (rand <= enemyObject.rarity) {
+                        if (minRarity > enemyObject.rarity) {
+                            minRarity = enemyObject.rarity;
+                            chosenEnemyType = enemyObject;
+                        }
+                    }
+                }
+                if (chosenEnemyType != null) {   //Sempre vai entrar aqui pois o inimigo mais fraco terá uma chance de 100% de spawnar
+                    Vector3 spawnPoint = enemySpawnPoints[Random.Range(0, enemySpawnPoints.Length - 1)].position;
+                    GameObject enemy = Instantiate(baseEnemy, spawnPoint, Quaternion.identity);
+                    Enemy scriptEnemy = enemy.GetComponent<Enemy>();
+                    int enemyType = chosenEnemyType.type;
+                    scriptEnemy.enemyConfigs = chosenEnemyType;
+                    scriptEnemy.enemyType = enemyType;
+                    scriptEnemy.playerTransform = playerTransform;
+                    enemy.SetActive(true);
+                    numEnemiesSpawned++;
+                }
+
+
             }
         }
     }
@@ -154,6 +170,11 @@ public class GameController : MonoBehaviour {
             txtNewRecord.gameObject.SetActive(true);
         }
         canvasDeathPlayer.SetActive(true);
+        Globals.SaveData();
+    }
+
+    private void OnApplicationQuit() {
+        Globals.SaveData();
     }
 
     //Métodos ativados com botões:
@@ -168,6 +189,7 @@ public class GameController : MonoBehaviour {
     }
     public void ExitOptions() {
         canvasOptions.SetActive(false);
+        Globals.SaveData();
         updateConfigs();
     }
     public void Upgrades() {
@@ -179,6 +201,7 @@ public class GameController : MonoBehaviour {
     public void ResumeGame() {
         canvasPause.SetActive(false);
         canvasOptions.SetActive(false);
+        gamePaused = false;
     }
     public void ReturnToMenu() {
         TransitionController.GetInstance().LoadMenu();
@@ -215,6 +238,9 @@ public class GameController : MonoBehaviour {
     }
     public void ChangeLanguage(int newIdLang) {
         updateLanguage(newIdLang);
+    }
+    public void ResetSave() {
+        Globals.ResetData();
     }
 
     //Métodos que controlam interfaces do jogo:

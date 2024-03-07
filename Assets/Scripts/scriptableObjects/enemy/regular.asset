@@ -10,10 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 35c3281b1fd1d724e82fd0e597b22449, type: 3}
-  m_Name: enemy3
+  m_Name: regular
   m_EditorClassIdentifier: 
-  health: 50
-  bulletDamage: 10
-  shotCooldown: 0.5
+  rarity: 50
+  type: 1
+  health: 20
+  bulletDamage: 8
+  shotCooldown: 1
   speed: 10
-  color: {r: 0.2551062, g: 0.5849056, b: 0, a: 0}
+  color: {r: 1, g: 0, b: 0.473217, a: 0}

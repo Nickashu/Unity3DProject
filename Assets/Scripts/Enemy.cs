@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.AI;
 
 public class Enemy : MonoBehaviour {
-    public EnemyObject[] enemyConfigs;
+    public EnemyObject enemyConfigs;
     public Transform bulletHole;
     public ParticleSystem particlesDeath;
     public Canvas canvasPoints;
@@ -25,12 +25,12 @@ public class Enemy : MonoBehaviour {
         meshRenderer = GetComponent<MeshRenderer>();
         navMesh = GetComponent<NavMeshAgent>();
         scriptHealthBar = healthBar.GetComponent<HealthBar>();
-        currentHealth = enemyConfigs[enemyType].health;
+        currentHealth = enemyConfigs.health;
         originalHealth = currentHealth;
-        bulletDamage = enemyConfigs[enemyType].bulletDamage;
-        meshRenderer.material.color = enemyConfigs[enemyType].color;
-        navMesh.speed = enemyConfigs[enemyType].speed;
-        shotCooldown = enemyConfigs[enemyType].shotCooldown;
+        bulletDamage = enemyConfigs.bulletDamage;
+        meshRenderer.material.color = enemyConfigs.color;
+        navMesh.speed = enemyConfigs.speed;
+        shotCooldown = enemyConfigs.shotCooldown;
         originalColor = meshRenderer.material.color;
         healthBar.SetActive(true);
     }

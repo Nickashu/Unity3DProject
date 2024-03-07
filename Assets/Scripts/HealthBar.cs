@@ -38,22 +38,21 @@ public class HealthBar : MonoBehaviour {
     }
 
     private IEnumerator updateBar(float currentSize, float newSize, bool creatureDead = false) {
-        if (creatureDead) {
-            Debug.Log("ataulizando vida na morte!");
-        }
         float timePassed = 0f;
         float lerpDuration = creature.CompareTag("Player") ? 0.15f : 0.3f;
         newSize = creatureDead ? 0 : newSize;
         barIsLerping = true;
-        if (newSize <= 0.1)
-            newSize = 0;
-        while (timePassed < lerpDuration) {
-            float t = timePassed / lerpDuration;
-            float lerpValue = Mathf.Lerp(currentSize, newSize, t);
-            rectTransform.sizeDelta = new Vector2(lerpValue, rectTransform.sizeDelta.y);
-            timePassed += Time.deltaTime;
-            yield return null;
+        if (newSize > 0.1) {
+            while (timePassed < lerpDuration) {
+                float t = timePassed / lerpDuration;
+                float lerpValue = Mathf.Lerp(currentSize, newSize, t);
+                rectTransform.sizeDelta = new Vector2(lerpValue, rectTransform.sizeDelta.y);
+                timePassed += Time.deltaTime;
+                yield return null;
+            }
         }
+        else
+            rectTransform.sizeDelta = new Vector2(0, rectTransform.sizeDelta.y);
         barIsLerping = false;
     }
 }

@@ -13,24 +13,30 @@ public class TransitionController : MonoBehaviour {
         return instance;
     }
 
-    private void Start() {
+    private void Awake() {
         if (instance == null)
             instance = this;
         else
             Destroy(gameObject);
+    }
 
+    private void Start() {
         animTransitionScenes = bgTransitions.GetComponent<Animator>();
         if (SceneManager.GetActiveScene().name.ToLower().Contains("menu")) {
-            //if (SoundController.GetInstance().numTimesMenu == 0) {
-            //    SoundController.GetInstance().ChangeVolumes();
-            //    SoundController.GetInstance().numTimesMenu = 1;
-            //}
-            //else
-            //    animTransitionScenes.SetBool("fadeOut", true);
-            Debug.Log("Menu!");
+            if (!Globals.firstScene) {
+                //SoundController.GetInstance().ChangeVolumes();
+                animTransitionScenes.SetBool("fadeOut", true);
+            }
         }
         else
             animTransitionScenes.SetTrigger("fadeOut");
+
+        if (Globals.firstScene) {   //Se o jogo tiver acabado de abrir
+            Globals.LoadData();
+            Globals.firstScene = false;
+        }
+        else
+            Globals.SaveData();
 
         //playSceneMusic();
     }
