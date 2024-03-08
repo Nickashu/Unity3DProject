@@ -8,9 +8,10 @@ using UnityEngine.UI;
 public class GameController : MonoBehaviour {
 
     [SerializeField] private int maxNumEnemies;
-    [SerializeField] private GameObject baseEnemy, canvasPause, canvasOptions, canvasControls, canvasUpgradesScreen, canvasUpgradePistolGroup, canvasUpgradeSMGGroup, canvasMisteryGunGroup, canvasDeathPlayer;
+    [SerializeField] private GameObject baseEnemy, canvasPause, canvasOptions, canvasControls, canvasUpgradesScreen, canvasUpgradePistolGroup, canvasUpgradeSMGGroup, canvasMisteryGunGroup, canvasDeathPlayer, imgMisteryGunUpgrade;
     [SerializeField] private GameObject[] objsLang;
     [SerializeField] private Slider OSTVolumeSlider, SFXVolumeSlider, sensitivitySlider;
+    [SerializeField] private TMP_Dropdown dropdownLanguage;
     [SerializeField] private ParticleSystem particlesDeathPlayer;
     [SerializeField] private EnemyObject[] enemiesConfig;
     private static GameController instance;
@@ -153,13 +154,13 @@ public class GameController : MonoBehaviour {
     private void playerDeath() {
         playerTransform.gameObject.SetActive(false);
         gamePaused = true;
-        SoundController.GetInstance().PlaySound("explosion", playerTransform.gameObject);
         ParticleSystem particles = Instantiate(particlesDeathPlayer, playerTransform.position, Quaternion.identity);
         ParticleSystem.MainModule particlesMain = particles.main;
         Color colorParticles = playerTransform.GetComponent<MeshRenderer>().material.color;
         colorParticles.a = 1f;
         particlesMain.startColor = colorParticles;
         particles.gameObject.SetActive(true);
+        SoundController.GetInstance().PlaySound("explosion", particles.gameObject);
         particles.Play();
         StartCoroutine(delayDeathPlayer());
     }
@@ -293,6 +294,7 @@ public class GameController : MonoBehaviour {
         GameObject misteryGunSection = canvasMisteryGunGroup.transform.GetChild(1).gameObject;
         TextMeshProUGUI txtPriceMisteryGun = misteryGunSection.transform.GetChild(1).transform.GetChild(1).GetComponent<TextMeshProUGUI>();
         txtPriceMisteryGun.text = "X" + Globals.priceMisteryGun;
+        imgMisteryGunUpgrade.SetActive(Globals.hasMisteryGun);
         if (!Globals.hasMisteryGun)
             enableSectionUpgrade(misteryGunSection);
         else
@@ -331,6 +333,7 @@ public class GameController : MonoBehaviour {
     }
 
     private void updateConfigs(bool sceneStart=false) {
+        dropdownLanguage.value = Globals.idLanguage;
         if (camCinemachine != null)
             camCinemachine.m_XAxis.m_MaxSpeed = Globals.camSensitivity;
         SoundController.GetInstance().ChangeVolumes(sceneStart);

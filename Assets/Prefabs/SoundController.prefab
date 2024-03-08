@@ -50,6 +50,7 @@ MonoBehaviour:
     is3D: 0
     isOST: 1
     clip: {fileID: 8300000, guid: 200c2049aa58cd245babe496dc7f194d, type: 3}
+    origins: []
     volume: 0
     pitch: 1
     audioSource: {fileID: 0}
@@ -58,6 +59,7 @@ MonoBehaviour:
     is3D: 0
     isOST: 1
     clip: {fileID: 8300000, guid: e74aed4ccec861741b662d6abb499c7c, type: 3}
+    origins: []
     volume: 0
     pitch: 1
     audioSource: {fileID: 0}
@@ -66,6 +68,7 @@ MonoBehaviour:
     is3D: 0
     isOST: 0
     clip: {fileID: 8300000, guid: b04ee6cedff8e95488d5e42c15c4bbd3, type: 3}
+    origins: []
     volume: 1
     pitch: 1
     audioSource: {fileID: 0}
@@ -74,6 +77,7 @@ MonoBehaviour:
     is3D: 0
     isOST: 0
     clip: {fileID: 8300000, guid: c7bb33f962bae174faf3e6e115ae1cc8, type: 3}
+    origins: []
     volume: 1
     pitch: 1
     audioSource: {fileID: 0}
@@ -82,6 +86,7 @@ MonoBehaviour:
     is3D: 0
     isOST: 0
     clip: {fileID: 8300000, guid: 057378897827d9c4db1cba88b0793b27, type: 3}
+    origins: []
     volume: 1
     pitch: 1
     audioSource: {fileID: 0}
@@ -90,6 +95,7 @@ MonoBehaviour:
     is3D: 0
     isOST: 0
     clip: {fileID: 8300000, guid: 66d83e0d8a847104e9286b40e395f54d, type: 3}
+    origins: []
     volume: 1
     pitch: 1
     audioSource: {fileID: 0}
@@ -98,6 +104,7 @@ MonoBehaviour:
     is3D: 0
     isOST: 0
     clip: {fileID: 8300000, guid: 5e8392baa1622db4184d675d343d5c4c, type: 3}
+    origins: []
     volume: 1
     pitch: 1
     audioSource: {fileID: 0}
@@ -106,6 +113,34 @@ MonoBehaviour:
     is3D: 0
     isOST: 0
     clip: {fileID: 8300000, guid: 272c2edde33328546a418e72fd6a30d5, type: 3}
+    origins: []
+    volume: 1
+    pitch: 1
+    audioSource: {fileID: 0}
+  - name: damage
+    loop: 0
+    is3D: 0
+    isOST: 0
+    clip: {fileID: 8300000, guid: ffd92d80e6ff8db4b9fa199b8aaecb62, type: 3}
+    origins: []
+    volume: 1
+    pitch: 1
+    audioSource: {fileID: 0}
+  - name: shot
+    loop: 0
+    is3D: 1
+    isOST: 0
+    clip: {fileID: 8300000, guid: 1c3c2503a68115f41a19d60a2927ee16, type: 3}
+    origins: []
+    volume: 1
+    pitch: 1
+    audioSource: {fileID: 0}
+  - name: explosion
+    loop: 0
+    is3D: 1
+    isOST: 0
+    clip: {fileID: 8300000, guid: 2e56450cbfbea2b4a93842368a3a8cac, type: 3}
+    origins: []
     volume: 1
     pitch: 1
     audioSource: {fileID: 0}

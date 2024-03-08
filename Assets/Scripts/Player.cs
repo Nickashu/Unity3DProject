@@ -133,7 +133,7 @@ public class Player : MonoBehaviour {
         }
     }
 
-    private bool isOnGround() {
+    public bool isOnGround() {
         Collider[] colliders = Physics.OverlapSphere(groundCheck.position, 0.2f, groundLayer);
         return colliders.Length > 0;
     }
@@ -218,6 +218,7 @@ public class Player : MonoBehaviour {
         }
         currentHealth -= damage;
         GameController.GetInstance().playerDead = currentHealth <= 0 ? true : false;
+        SoundController.GetInstance().PlaySound("damage");
         updateHealthBar();
         StartCoroutine(blinkDamage());
     }

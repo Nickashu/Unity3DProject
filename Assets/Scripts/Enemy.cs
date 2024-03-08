@@ -44,8 +44,11 @@ public class Enemy : MonoBehaviour {
                     chasing = false;
                 else
                     chasing = true;
-                if (distToPlayer <= distLookPlayer)
+                if (distToPlayer <= distLookPlayer) {
                     transform.LookAt(playerTransform.position);   //Fazendo o inimigo sempre olhar para o player
+                    Quaternion rot = new Quaternion(0, transform.rotation.y, 0, transform.rotation.w);
+                    transform.rotation = rot;
+                }
 
                 if (!chasing) {    //Se estiver perto do jogador
                     if (canShoot && !isDead) {
@@ -129,13 +132,14 @@ public class Enemy : MonoBehaviour {
         canvasPts.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = "+" + amountCoins.ToString();
         canvasPts.gameObject.SetActive(true);
         //Sistema de partículas:
-        SoundController.GetInstance().PlaySound("explosion", gameObject);
         ParticleSystem particles = Instantiate(particlesDeath, gameObject.transform.position, Quaternion.identity);
         ParticleSystem.MainModule particlesMain = particles.main;
         Color colorParticles = meshRenderer.material.color;
         colorParticles.a = 1f;
         particlesMain.startColor = colorParticles;
         particles.gameObject.SetActive(true);
+        SoundController.GetInstance().PlaySound("explosion", particles.gameObject);
+        SoundController.GetInstance().objectsSounds.Remove(gameObject);
         particles.Play();
         //Power-up:
         Vector3 positionPowerUp = gameObject.transform.position;

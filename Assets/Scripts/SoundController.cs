@@ -11,8 +11,8 @@ public class SoundController : MonoBehaviour {   //Será uma classe Singleton
     public List<GameObject> objectsSounds;
 
     private Dictionary<string, bool> isPlayingOST = new Dictionary<string, bool> { { "OST_menu", false }, { "OST_level", false } };
-    private Dictionary<string, float> originalVolumesOSTs = new Dictionary<string, float>();
-    private Dictionary<string, float> currentVolumesOSTs = new Dictionary<string, float>();
+    private Dictionary<string, float> originalVolumesOSTs = new Dictionary<string, float> { { "OST_menu", 0.6f }, { "OST_level", 0.25f } };
+    private Dictionary<string, float> currentVolumesOSTs = new Dictionary<string, float> { { "OST_menu", 0.6f }, { "OST_level", 0.25f } };
     private Dictionary<string, float> originalVolumesSFXs = new Dictionary<string, float>();
     private Dictionary<string, float> currentVolumesSFXs = new Dictionary<string, float>();
 
@@ -21,7 +21,6 @@ public class SoundController : MonoBehaviour {   //Será uma classe Singleton
     }
 
     private void Awake() {
-        DontDestroyOnLoad(gameObject);
         if (instance == null)
             instance = this;
         else
@@ -40,8 +39,8 @@ public class SoundController : MonoBehaviour {   //Será uma classe Singleton
                 s.audioSource.playOnAwake = false;
                 if (s.is3D) {
                     s.audioSource.spatialBlend = 1f;
-                    s.audioSource.maxDistance = 25f;
-                    s.audioSource.minDistance = 3f;
+                    s.audioSource.maxDistance = 100f;
+                    s.audioSource.minDistance = 10f;
                     s.audioSource.rolloffMode = AudioRolloffMode.Linear;
                 }
             }
@@ -59,17 +58,13 @@ public class SoundController : MonoBehaviour {   //Será uma classe Singleton
                     s.audioSource.playOnAwake = false;
                     if (s.is3D) {
                         s.audioSource.spatialBlend = 1f;
-                        s.audioSource.maxDistance = 25f;
-                        s.audioSource.minDistance = 3f;
+                        s.audioSource.maxDistance = 100f;
+                        s.audioSource.minDistance = 10f;
                         s.audioSource.rolloffMode = AudioRolloffMode.Linear;
                     }
                 }
             }
-            if (s.isOST) {
-                currentVolumesOSTs[s.name] = s.volume;
-                originalVolumesOSTs[s.name] = s.volume;
-            }
-            else {
+            if (!s.isOST) {
                 currentVolumesSFXs[s.name] = s.volume;
                 originalVolumesSFXs[s.name] = s.volume;
             }
