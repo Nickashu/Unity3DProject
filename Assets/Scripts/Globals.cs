@@ -33,15 +33,15 @@ public class Globals : MonoBehaviour {
     }
 
     public static Dictionary<int, int> upgradePricesPistol = new Dictionary<int, int>() {
-        {0, 10}, {1, 30}, {2, 50}
+        {0, 5}, {1, 10}, {2, 25}
     };
     public static Dictionary<int, int> upgradePricesSMG = new Dictionary<int, int>() {
-        {0, 10}, {1, 30}, {2, 50}
+        {0, 10}, {1, 10}, {2, 25}
     };
-    public static int priceMisteryGun = 500;
+    public static int priceMisteryGun = 100;
 
     public static Dictionary<int, float> levelsDamageTax = new Dictionary<int, float>() {    //Aqui estão as taxas de aumento de poder de cada upgrade
-        {0, 1f}, {1, 1.2f}, {2, 1.5f}, {3, 2f}
+        {0, 1f}, {1, 1.4f}, {2, 1.8f}, {3, 2.3f}
     };
 
     public static Dictionary<int, float> shotCoolDownGuns = new Dictionary<int, float>() {    //Este dicionário guardará o tempo de cool down entre os tiros de cada tipo de arma

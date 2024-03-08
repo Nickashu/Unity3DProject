@@ -12,10 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 35c3281b1fd1d724e82fd0e597b22449, type: 3}
   m_Name: strong
   m_EditorClassIdentifier: 
-  rarity: 20
+  rarity: 10
   type: 2
   health: 50
   bulletDamage: 15
-  shotCooldown: 0.7
+  shotCooldown: 1
   speed: 10
   color: {r: 0.2551062, g: 0.5849056, b: 0, a: 0}
