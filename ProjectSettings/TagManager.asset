@@ -10,7 +10,7 @@ TagManager:
   - playerHealth
   - pistolUpgrade
   - SMGUpgrade
-  - powerUp
+  - powerUpPrefab
   layers:
   - Default
   - TransparentFX

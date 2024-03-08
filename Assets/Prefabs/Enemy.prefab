@@ -179,16 +179,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fbc701a76ac16fb49a5114d8ba1664fb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  enemyConfigs:
-  - {fileID: 11400000, guid: 0eca2fc5bed5afd4ab28a416a40e8084, type: 2}
-  - {fileID: 11400000, guid: 7a79d12bb84e096478f911bbaae2eeef, type: 2}
-  - {fileID: 11400000, guid: 6b88ba32939521b4984aa2eb8b2f0ece, type: 2}
+  enemyConfigs: {fileID: 0}
   bulletHole: {fileID: 3513343984825264919}
   particlesDeath: {fileID: 0}
   canvasPoints: {fileID: 0}
   playerTransform: {fileID: 0}
   enemyType: 0
-  distShootPlayer: 15
+  distShootPlayer: 20
+  distLookPlayer: 18
   healthBar: {fileID: 7175900384659270373}
 --- !u!65 &2049451147351681555
 BoxCollider:

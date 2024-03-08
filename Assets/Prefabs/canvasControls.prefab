@@ -140,7 +140,7 @@ GameObject:
   - component: {fileID: 1624868547186913959}
   - component: {fileID: 2169327502862811396}
   m_Layer: 5
-  m_Name: txtUpgradeTimesTwo
+  m_Name: txtPowerUpTimesTwo
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -487,7 +487,7 @@ GameObject:
   - component: {fileID: 726660800333491950}
   - component: {fileID: 7782120414949989766}
   m_Layer: 5
-  m_Name: upgrades
+  m_Name: powerUps
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -866,7 +866,7 @@ GameObject:
   - component: {fileID: 8404938344779877936}
   - component: {fileID: 4007415186744118030}
   m_Layer: 5
-  m_Name: txtUpgradeVelocity
+  m_Name: txtPowerUpVelocity
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1000,7 +1000,7 @@ GameObject:
   - component: {fileID: 5503456987461584761}
   - component: {fileID: 1327530710304576210}
   m_Layer: 5
-  m_Name: txtUpgrades
+  m_Name: txtPowerUps
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1053,7 +1053,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Upgrades
+  m_text: Power-Ups
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: d241552eebcefe747905974415ae5104, type: 2}
   m_sharedMaterial: {fileID: 5456567759730926169, guid: d241552eebcefe747905974415ae5104, type: 2}
@@ -1985,7 +1985,7 @@ GameObject:
   - component: {fileID: 1505723897737359894}
   - component: {fileID: 7913307816389529389}
   m_Layer: 5
-  m_Name: panelUpgrades
+  m_Name: panelPowerUps
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

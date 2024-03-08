@@ -32,6 +32,9 @@ public class PowerUpController : MonoBehaviour {
         if(chosenPowerUp != null) {
             GameObject powerUpSection = Instantiate(powerUpPrefab, position, Quaternion.identity);
             GameObject powerUp = powerUpSection.transform.GetChild(0).gameObject;
+            powerUp.GetComponent<MeshFilter>().mesh = chosenPowerUp.mesh;
+            powerUp.transform.localScale = chosenPowerUp.scale;
+            powerUp.transform.position = chosenPowerUp.position;
             powerUp.GetComponent<MeshRenderer>().material.color = chosenPowerUp.color;
             powerUp.GetComponent<PowerUp>().type = chosenPowerUp.type;
             powerUpSection.SetActive(true);

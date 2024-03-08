@@ -83,8 +83,8 @@ public class Globals : MonoBehaviour {
         {"txtControlAim", new string[] {"Aim", "Mirar" } },
         {"txtControlPause", new string[] {"Pause", "Pausar" } },
         {"txtControlChangeWeapon", new string[] {"Change weapon", "Trocar arma" } },
-        {"txtUpgradeVelocity", new string[] {"Speed boost", "Aumento de velocidade" } },
-        {"txtUpgradeTimesTwo", new string[] {"Double coins", "Moedas em dobro" } },
+        {"txtPowerUpVelocity", new string[] {"Speed boost", "Aumento de velocidade" } },
+        {"txtPowerUpTimesTwo", new string[] {"Double coins", "Moedas em dobro" } },
     };
 
     //Métodos para salvar/carregar dados

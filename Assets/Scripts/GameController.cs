@@ -42,7 +42,6 @@ public class GameController : MonoBehaviour {
         coinsMultiplier = baseCoinsMultiplier;
         if (SceneManager.GetActiveScene().name.ToLower().Contains("main")) {
             isInGameScene = true;
-            //Cursor.visible = false;   debug
             InvokeRepeating("spawnEnemy", 2f, 5f);
             numEnemiesSpawned = 0;
             numEnemiesDefeated = 0;
@@ -84,6 +83,7 @@ public class GameController : MonoBehaviour {
                         canvasPause.SetActive(false);
                     }
                 }
+                Cursor.visible = gamePaused;
             }
             else {
                 if (isInMenuScene) {
@@ -98,10 +98,8 @@ public class GameController : MonoBehaviour {
         }
 
         if (isInGameScene) {
-            if (gamePaused)
-                camCinemachine.enabled = false;
-            else
-                camCinemachine.enabled = true;
+            camCinemachine.enabled = !gamePaused;
+            Cursor.visible = gamePaused;
         }
 
         if (playerDead) {

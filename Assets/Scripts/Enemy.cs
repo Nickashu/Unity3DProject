@@ -13,7 +13,7 @@ public class Enemy : MonoBehaviour {
 
     private bool isLerpingDamage = false, isDead = false, chasing = true, canShoot = true, deadFlag=false;
     private float bulletDamage, originalHealth, currentHealth, shotCooldown;
-    [SerializeField] private float distShootPlayer;
+    [SerializeField] private float distShootPlayer, distLookPlayer;
     private MeshRenderer meshRenderer;
     private NavMeshAgent navMesh;
     private Color originalColor;
@@ -39,11 +39,13 @@ public class Enemy : MonoBehaviour {
         if (!GameController.GetInstance().gamePaused) {
             if (!GameController.GetInstance().playerDead) {    //Se o jogador não tiver morrido
                 navMesh.destination = playerTransform.position;
-                transform.LookAt(playerTransform.position);   //Fazendo o inimigo sempre olhar para o player
-                if ((gameObject.transform.position - playerTransform.position).magnitude <= distShootPlayer)
+                float distToPlayer = (gameObject.transform.position - playerTransform.position).magnitude;
+                if (distToPlayer <= distShootPlayer)
                     chasing = false;
                 else
                     chasing = true;
+                if (distToPlayer <= distLookPlayer)
+                    transform.LookAt(playerTransform.position);   //Fazendo o inimigo sempre olhar para o player
 
                 if (!chasing) {    //Se estiver perto do jogador
                     if (canShoot && !isDead) {

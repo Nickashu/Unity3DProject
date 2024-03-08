@@ -6,7 +6,7 @@ using UnityEngine.InputSystem;
 
 public class Player : MonoBehaviour {
 
-    private float vertical, horizontal, turnSmoothVelocity, originalHealth, originalMovementSpeed, originalMovementSpeedBoost, referenceOriginalSpeed, heightWithoutAim;
+    private float vertical, horizontal, turnSmoothVelocity, originalHealth, originalMovementSpeed, originalMovementSpeedBoost, referenceOriginalSpeed;
     private bool canShoot = true, aiming = false, enableAiming = true, isDead=false, isLerpingDamage=false;
     private bool powerUpVelocity = false, powerUpTimesTwo = false;   //Essas variáveis manterão os estados dos power-ups
     private int selectedGun=0;
@@ -21,6 +21,7 @@ public class Player : MonoBehaviour {
     public Transform groundCheck, cam, bulletHole;
     public LayerMask groundLayer;
     public GameObject healthBar, canvasDeath, iconPowerUpVelocity, iconPowerUpTimesTwo;
+    [SerializeField] private GameObject[] imgsWeapons;
 
     private void Start() {
         rb = GetComponent<Rigidbody>();
@@ -30,26 +31,24 @@ public class Player : MonoBehaviour {
         originalHealth = currentHealth;
         meshRenderer = gameObject.GetComponent<MeshRenderer>();
         originalColor = meshRenderer.material.color;
+        imgsWeapons[selectedGun].SetActive(true);
         updatePowerUps();
         InvokeRepeating("IncreaseHealth", 0f, 1f);   //A vida do jogador aumentará constantemente
     }
 
     private void Update() {
         if (!GameController.GetInstance().gamePaused) {    //Se o jogo não estiver pausado
-            aiming = Input.GetKey(KeyCode.Mouse1);
+            aiming = Input.GetKey(KeyCode.Mouse1) && isOnGround();
             if (aiming) {
                 transform.rotation = Quaternion.Euler(transform.rotation.x, cam.transform.eulerAngles.y, transform.rotation.z);
-                movementSpeed = 0;
-                Vector3 newPos = transform.position;
-                newPos.y = heightWithoutAim;
-                transform.position = newPos;
+                vertical = 0;
+                horizontal = 0;
             }
             else {   //Só poderá correr se não estiver mirando
                 if (Input.GetKey(KeyCode.LeftShift))
                     movementSpeed = referenceOriginalSpeed * 1.5f;
                 else
                     movementSpeed = referenceOriginalSpeed;
-                heightWithoutAim = transform.position.y;
             }
 
             if (aiming && enableAiming)
@@ -59,13 +58,15 @@ public class Player : MonoBehaviour {
 
             //Detecções de botões:
             if (Input.GetKeyDown(KeyCode.R)) {    //Para trocar de arma
+                imgsWeapons[selectedGun].SetActive(false);
                 selectedGun = selectedGun == Globals.shotCoolDownGuns.Count - 1 ? 0 : selectedGun + 1;
                 if (selectedGun == (int)Globals.typesOfGuns.misteryGun) {
                     if (!Globals.hasMisteryGun)
                         selectedGun = selectedGun == Globals.shotCoolDownGuns.Count - 1 ? 0 : selectedGun + 1;
                 }
                 canShoot = true;
-                updateSelectedGun();
+                imgsWeapons[selectedGun].SetActive(true);
+                //Debug.Log("Mudou para a arma: " + Enum.GetName(typeof(Globals.typesOfGuns), selectedGun));
             }
 
             if (Input.GetKey(KeyCode.Mouse0)) {
@@ -80,26 +81,27 @@ public class Player : MonoBehaviour {
 
     private void FixedUpdate() {
         if (!GameController.GetInstance().gamePaused) {
-            Vector3 direction = new Vector3(horizontal, 0f, vertical).normalized;
-            if (direction.magnitude >= 0.1f) {
-                float targetAngle = Mathf.Atan2(direction.x, direction.z) * Mathf.Rad2Deg + cam.eulerAngles.y;   //Pegando o ângulo da movimentação em graus (levando em consideração a câmera)
-                float angle = Mathf.SmoothDampAngle(transform.eulerAngles.y, targetAngle, ref turnSmoothVelocity, turnSmoothTime);    //Fazendo a rotação acontecer de forma suave
-                transform.rotation = Quaternion.Euler(0f, angle, 0f);
-                if(rb.velocity.magnitude < maxMovementVelocity) {
-                    Vector3 moveDirection = (Quaternion.Euler(0f, angle, 0f) * Vector3.forward).normalized;
-                    rb.AddForce(moveDirection * movementSpeed);    //Para usar o AddForce, lembrar de adicionar um drag no inspetor para limitar a velocidade!!!!
+            if (!aiming) {
+                Vector3 direction = new Vector3(horizontal, 0f, vertical).normalized;
+                if (direction.magnitude >= 0.1f) {
+                    float targetAngle = Mathf.Atan2(direction.x, direction.z) * Mathf.Rad2Deg + cam.eulerAngles.y;   //Pegando o ângulo da movimentação em graus (levando em consideração a câmera)
+                    float angle = Mathf.SmoothDampAngle(transform.eulerAngles.y, targetAngle, ref turnSmoothVelocity, turnSmoothTime);    //Fazendo a rotação acontecer de forma suave
+                    transform.rotation = Quaternion.Euler(0f, angle, 0f);
+                    if (rb.velocity.magnitude < maxMovementVelocity) {
+                        Vector3 moveDirection = (Quaternion.Euler(0f, angle, 0f) * Vector3.forward).normalized;
+                        rb.AddForce(moveDirection * movementSpeed);    //Para usar o AddForce, lembrar de adicionar um drag no inspetor para limitar a velocidade!!!!
+                    }
+                    //characterController.Move(moveDirection * movementSpeed * Time.deltaTime);   //Usando o characterController para mover o personagem de acordo com a posição da câmera
+                    //rb.velocity = new Vector3(moveDirection.x * movementSpeed, moveDirection.y, moveDirection.x * movementSpeed);
+                    //transform.Translate(moveDirection * movementSpeed * Time.deltaTime);
+                    //rb.MovePosition(transform.position + moveDirection * movementSpeed * Time.deltaTime);
                 }
-                //characterController.Move(moveDirection * movementSpeed * Time.deltaTime);   //Usando o characterController para mover o personagem de acordo com a posição da câmera
-                //rb.velocity = new Vector3(moveDirection.x * movementSpeed, moveDirection.y, moveDirection.x * movementSpeed);
-                //transform.Translate(moveDirection * movementSpeed * Time.deltaTime);
-                //rb.MovePosition(transform.position + moveDirection * movementSpeed * Time.deltaTime);
+                else {
+                    float xVelocity = Mathf.Lerp(rb.velocity.x, 0f, 0.05f);
+                    float zVelocity = Mathf.Lerp(rb.velocity.z, 0f, 0.05f);
+                    rb.velocity = new Vector3(xVelocity, rb.velocity.y, zVelocity);
+                }
             }
-            else {
-                float xVelocity = Mathf.Lerp(rb.velocity.x, 0f, 0.05f);
-                float zVelocity = Mathf.Lerp(rb.velocity.z, 0f, 0.05f);
-                rb.velocity = new Vector3(xVelocity, rb.velocity.y, zVelocity);
-            }
-
         }
     }
 
@@ -135,11 +137,6 @@ public class Player : MonoBehaviour {
         return colliders.Length > 0;
     }
 
-    private void updateSelectedGun() {
-        Debug.Log("Mudou para a arma: " + Enum.GetName(typeof(Globals.typesOfGuns), selectedGun));
-    }
-
-
     private IEnumerator shoot() {
         BulletController.GetInstance().spawnBullet(bulletHole.transform.position, selectedGun, transform.rotation);
         yield return new WaitForSeconds(Globals.shotCoolDownGuns[selectedGun] * 0.5f);  //Espera metade do tempo de cool down para liberar a mira novamente
@@ -160,8 +157,8 @@ public class Player : MonoBehaviour {
 
     private void OnTriggerEnter(Collider collider) {
         if (!isDead) {
-            if (collider.gameObject.CompareTag("powerUp")) {
-                PowerUp powerUpScript = collider.gameObject.GetComponent<PowerUp>();
+            if (collider.gameObject.CompareTag("powerUpPrefab")) {
+                PowerUp powerUpScript = collider.transform.GetChild(0).gameObject.GetComponent<PowerUp>();
                 Debug.Log("Pegou power-up do tipo: " + Enum.GetName(typeof(Globals.typesOfPowerUps), powerUpScript.type));
                 collectPowerUp(powerUpScript.type);
                 Destroy(collider.gameObject);

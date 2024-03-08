@@ -4,4 +4,6 @@ using UnityEngine;
 public class PowerUpObject : ScriptableObject {
     public int rarity, type;   //rarity pode variar de 1 a 100
     public Color color;
+    public Vector3 scale, position;
+    public Mesh mesh;
 }
