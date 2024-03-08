@@ -72,7 +72,7 @@ public class Enemy : MonoBehaviour {
     }
 
     private IEnumerator shoot() {
-        BulletController.GetInstance().spawnBullet(bulletHole.transform.position, (int)Globals.typesOfGuns.enemyGun, transform.rotation, true, bulletDamage);
+        BulletController.GetInstance().spawnBullet(bulletHole.transform.position, (int)Globals.typesOfGuns.enemyGun, transform.rotation, gameObject, true, bulletDamage);
         yield return new WaitForSeconds(shotCooldown);
         canShoot = true;
     }
@@ -129,6 +129,7 @@ public class Enemy : MonoBehaviour {
         canvasPts.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = "+" + amountCoins.ToString();
         canvasPts.gameObject.SetActive(true);
         //Sistema de partículas:
+        SoundController.GetInstance().PlaySound("explosion", gameObject);
         ParticleSystem particles = Instantiate(particlesDeath, gameObject.transform.position, Quaternion.identity);
         ParticleSystem.MainModule particlesMain = particles.main;
         Color colorParticles = meshRenderer.material.color;

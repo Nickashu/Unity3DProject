@@ -35,11 +35,9 @@ public class TransitionController : MonoBehaviour {
         }
         else
             Globals.SaveData();
-
-        playSceneMusic();
     }
 
-    private void playSceneMusic() {
+    public void playSceneMusic() {
         if (SceneManager.GetActiveScene().name.ToLower().Contains("menu"))
             SoundController.GetInstance().PlaySound("OST_menu", null);
         else
@@ -48,7 +46,6 @@ public class TransitionController : MonoBehaviour {
 
     public void LoadNextScene() {
         if (SceneManager.GetActiveScene().buildIndex == SceneManager.sceneCountInBuildSettings - 1) {
-            Debug.Log("Jogo terminado!");
             StartCoroutine(LoadScene(0));   //Carregando a primeira cena novamente (menu)
         }
         else

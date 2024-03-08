@@ -2358,7 +2358,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1323607220}
         m_TargetAssemblyTypeName: GameController, Assembly-CSharp
-        m_MethodName: ExitUpgrades
+        m_MethodName: ExitUpgradesBtn
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -5900,63 +5900,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2017131437}
   m_CullTransparentMesh: 1
---- !u!1001 &68181525569147474
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 510523209418554065, guid: 73027c0bc6f71e145b26d17f5390a7a6, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 510523209418554065, guid: 73027c0bc6f71e145b26d17f5390a7a6, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 510523209418554065, guid: 73027c0bc6f71e145b26d17f5390a7a6, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 510523209418554065, guid: 73027c0bc6f71e145b26d17f5390a7a6, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 510523209418554065, guid: 73027c0bc6f71e145b26d17f5390a7a6, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 510523209418554065, guid: 73027c0bc6f71e145b26d17f5390a7a6, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 510523209418554065, guid: 73027c0bc6f71e145b26d17f5390a7a6, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 510523209418554065, guid: 73027c0bc6f71e145b26d17f5390a7a6, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 510523209418554065, guid: 73027c0bc6f71e145b26d17f5390a7a6, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 510523209418554065, guid: 73027c0bc6f71e145b26d17f5390a7a6, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3443376662083297436, guid: 73027c0bc6f71e145b26d17f5390a7a6, type: 3}
-      propertyPath: m_Name
-      value: SoundController
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 73027c0bc6f71e145b26d17f5390a7a6, type: 3}
 --- !u!1001 &81907794526417828
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -6116,7 +6059,7 @@ PrefabInstance:
       objectReference: {fileID: 1323607220}
     - target: {fileID: 971772725234199839, guid: 4f4a34849d0084d48b80f4d4ef6e666c, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: ExitOptions
+      value: ExitOptionsBtn
       objectReference: {fileID: 0}
     - target: {fileID: 1678168355963542852, guid: 4f4a34849d0084d48b80f4d4ef6e666c, type: 3}
       propertyPath: m_text
@@ -6209,6 +6152,18 @@ PrefabInstance:
     - target: {fileID: 5251693982065259965, guid: 4f4a34849d0084d48b80f4d4ef6e666c, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5668505024566603797, guid: 4f4a34849d0084d48b80f4d4ef6e666c, type: 3}
+      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.size
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5668505024566603797, guid: 4f4a34849d0084d48b80f4d4ef6e666c, type: 3}
+      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5668505024566603797, guid: 4f4a34849d0084d48b80f4d4ef6e666c, type: 3}
+      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 5991560064242082365, guid: 4f4a34849d0084d48b80f4d4ef6e666c, type: 3}
       propertyPath: m_AnchorMax.y
@@ -6559,6 +6514,87 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 172ae76aa04c7ea4486c794c6543eb5d, type: 3}
+--- !u!1001 &6686783602379395830
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 5662729243800535215, guid: e161e565ddddbc34f9c4332cc79fd6dc, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5662729243800535215, guid: e161e565ddddbc34f9c4332cc79fd6dc, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5662729243800535215, guid: e161e565ddddbc34f9c4332cc79fd6dc, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5662729243800535215, guid: e161e565ddddbc34f9c4332cc79fd6dc, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5662729243800535215, guid: e161e565ddddbc34f9c4332cc79fd6dc, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5662729243800535215, guid: e161e565ddddbc34f9c4332cc79fd6dc, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5662729243800535215, guid: e161e565ddddbc34f9c4332cc79fd6dc, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5662729243800535215, guid: e161e565ddddbc34f9c4332cc79fd6dc, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5662729243800535215, guid: e161e565ddddbc34f9c4332cc79fd6dc, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5662729243800535215, guid: e161e565ddddbc34f9c4332cc79fd6dc, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7066888584124077996, guid: e161e565ddddbc34f9c4332cc79fd6dc, type: 3}
+      propertyPath: m_Name
+      value: SoundController
+      objectReference: {fileID: 0}
+    - target: {fileID: 8610754024568767276, guid: e161e565ddddbc34f9c4332cc79fd6dc, type: 3}
+      propertyPath: sounds.Array.size
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 8610754024568767276, guid: e161e565ddddbc34f9c4332cc79fd6dc, type: 3}
+      propertyPath: sounds.Array.data[8].clip
+      value: 
+      objectReference: {fileID: 8300000, guid: 272c2edde33328546a418e72fd6a30d5, type: 3}
+    - target: {fileID: 8610754024568767276, guid: e161e565ddddbc34f9c4332cc79fd6dc, type: 3}
+      propertyPath: sounds.Array.data[8].name
+      value: shot
+      objectReference: {fileID: 0}
+    - target: {fileID: 8610754024568767276, guid: e161e565ddddbc34f9c4332cc79fd6dc, type: 3}
+      propertyPath: sounds.Array.data[8].pitch
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8610754024568767276, guid: e161e565ddddbc34f9c4332cc79fd6dc, type: 3}
+      propertyPath: sounds.Array.data[8].volume
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8610754024568767276, guid: e161e565ddddbc34f9c4332cc79fd6dc, type: 3}
+      propertyPath: sounds.Array.data[8].origins.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: e161e565ddddbc34f9c4332cc79fd6dc, type: 3}
 --- !u!1001 &8875941944821042567
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -6573,7 +6609,7 @@ PrefabInstance:
       objectReference: {fileID: 1323607220}
     - target: {fileID: 171996323721615506, guid: 54f4f75ea90cbee458e1e1f99840b5c9, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: ExitControls
+      value: ExitControlsBtn
       objectReference: {fileID: 0}
     - target: {fileID: 212306511335982868, guid: 54f4f75ea90cbee458e1e1f99840b5c9, type: 3}
       propertyPath: m_AnchorMax.y
@@ -7275,4 +7311,4 @@ SceneRoots:
   - {fileID: 960083541637222850}
   - {fileID: 1294354928}
   - {fileID: 8875941944821042567}
-  - {fileID: 68181525569147474}
+  - {fileID: 6686783602379395830}

@@ -121,6 +121,7 @@ public class Player : MonoBehaviour {
         if (!GameController.GetInstance().gamePaused) {
             if (value.performed) {
                 if (isOnGround()) {
+                    SoundController.GetInstance().PlaySound("jump");
                     rb.AddForce(Vector3.up * jumpPower, ForceMode.Impulse);
                     //rb.velocity = new Vector3(rb.velocity.x, jumpPower, rb.velocity.z);
                 }
@@ -138,7 +139,7 @@ public class Player : MonoBehaviour {
     }
 
     private IEnumerator shoot() {
-        BulletController.GetInstance().spawnBullet(bulletHole.transform.position, selectedGun, transform.rotation);
+        BulletController.GetInstance().spawnBullet(bulletHole.transform.position, selectedGun, transform.rotation, gameObject);
         yield return new WaitForSeconds(Globals.shotCoolDownGuns[selectedGun] * 0.5f);  //Espera metade do tempo de cool down para liberar a mira novamente
         enableAiming = true;
         yield return new WaitForSeconds(Globals.shotCoolDownGuns[selectedGun] * 0.5f);
@@ -159,7 +160,8 @@ public class Player : MonoBehaviour {
         if (!isDead) {
             if (collider.gameObject.CompareTag("powerUpPrefab")) {
                 PowerUp powerUpScript = collider.transform.GetChild(0).gameObject.GetComponent<PowerUp>();
-                Debug.Log("Pegou power-up do tipo: " + Enum.GetName(typeof(Globals.typesOfPowerUps), powerUpScript.type));
+                //Debug.Log("Pegou power-up do tipo: " + Enum.GetName(typeof(Globals.typesOfPowerUps), powerUpScript.type));
+                SoundController.GetInstance().PlaySound("powerUp");
                 collectPowerUp(powerUpScript.type);
                 Destroy(collider.gameObject);
             }
@@ -183,14 +185,20 @@ public class Player : MonoBehaviour {
     }
 
     private IEnumerator activatePowerUp(Queue<bool> queuePowerUp) {
-        Debug.Log("Tamanho das filas: Velocity: " + queuePowerUpVelocity.Count + "    TimesTwo: " + queuePowerUpTimesTwo.Count);
+        //Debug.Log("Tamanho das filas: Velocity: " + queuePowerUpVelocity.Count + "    TimesTwo: " + queuePowerUpTimesTwo.Count);
         queuePowerUp.Enqueue(true);
         updatePowerUps();
-        yield return new WaitForSeconds(GameController.GetInstance().powerUpTime);
-        Debug.Log("Tempo de um power-up acabou!");
+        float timePassed = 0f, duration = GameController.GetInstance().powerUpTime;
+        while (timePassed < duration) {
+            float t = timePassed / duration;
+            if (!GameController.GetInstance().gamePaused)
+                timePassed += Time.deltaTime;
+            yield return null;
+        }
+        //Debug.Log("Tempo de um power-up acabou!");
         queuePowerUp.Dequeue();
         updatePowerUps();
-        Debug.Log("Tamanho das filas: Velocity: " + queuePowerUpVelocity.Count + "    TimesTwo: " + queuePowerUpTimesTwo.Count);
+        //Debug.Log("Tamanho das filas: Velocity: " + queuePowerUpVelocity.Count + "    TimesTwo: " + queuePowerUpTimesTwo.Count);
     }
 
     private void updatePowerUps() {
@@ -236,10 +244,12 @@ public class Player : MonoBehaviour {
     }
 
     private void IncreaseHealth() {
-        if (currentHealth > 0) {
-            if (currentHealth < originalHealth) {
-                currentHealth += healthIncrease;
-                scriptHealthBar.updateHealth(currentHealth, originalHealth, false);
+        if (!GameController.GetInstance().gamePaused) {
+            if (currentHealth > 0) {
+                if (currentHealth < originalHealth) {
+                    currentHealth += healthIncrease;
+                    scriptHealthBar.updateHealth(currentHealth, originalHealth, false);
+                }
             }
         }
     }

@@ -19,7 +19,7 @@ public class BulletController : MonoBehaviour {
             Destroy(gameObject);
     }
 
-    public void spawnBullet(Vector3 position, int typeOfGun, Quaternion rotation, bool isEnemy = false, float enemyBulletDamage = 0f) {
+    public void spawnBullet(Vector3 position, int typeOfGun, Quaternion rotation, GameObject origin, bool isEnemy = false, float enemyBulletDamage = 0f) {
         GameObject bullet = Instantiate(bulletObj, position, rotation);
         bullet.GetComponent<Bullet>().velocity = bulletVelocity;
         bullet.GetComponent<Bullet>().enemyBullet = isEnemy;
@@ -37,6 +37,7 @@ public class BulletController : MonoBehaviour {
             }
             bullet.GetComponent<Bullet>().damage = Globals.baseDamageGuns[typeOfGun] * damageTax;
         }
+        SoundController.GetInstance().PlaySound("shot", origin);
         bullet.SetActive(true);
     }
 }

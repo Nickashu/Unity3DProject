@@ -40,6 +40,12 @@ public class GameController : MonoBehaviour {
 
     private void Start() {
         coinsMultiplier = baseCoinsMultiplier;
+        updateCoins();   //Atualizando o texto do número de moedas
+        updateLanguage(Globals.idLanguage);
+        SoundController.GetInstance().LoadSounds();
+        updateConfigs(true);
+        TransitionController.GetInstance().playSceneMusic();
+
         if (SceneManager.GetActiveScene().name.ToLower().Contains("main")) {
             isInGameScene = true;
             InvokeRepeating("spawnEnemy", 2f, 5f);
@@ -50,9 +56,6 @@ public class GameController : MonoBehaviour {
             isInMenuScene = true;
             manageUpgrades();
         }
-        updateCoins();   //Atualizando o texto do número de moedas
-        updateLanguage(Globals.idLanguage);
-        updateConfigs();
 
         if (sensitivitySlider != null) {   //Se 1 slider estiver ativo, os outros também estarão
             sensitivitySlider.value = Globals.camSensitivity;
@@ -64,7 +67,7 @@ public class GameController : MonoBehaviour {
             OSTVolumeSlider.onValueChanged.AddListener((newValue) => {
                 Globals.volumeOST = newValue;
             });
-            OSTVolumeSlider.onValueChanged.AddListener((newValue) => {
+            SFXVolumeSlider.onValueChanged.AddListener((newValue) => {
                 Globals.volumeSFX = newValue;
             });
         }
@@ -88,11 +91,11 @@ public class GameController : MonoBehaviour {
             else {
                 if (isInMenuScene) {
                     if (canvasOptions.activeSelf)
-                        canvasOptions.SetActive(false);
+                        ExitOptions();
                     if (canvasControls.activeSelf)
-                        canvasControls.SetActive(false);
+                        ExitControls();
                     if (canvasUpgradesScreen.activeSelf)
-                        canvasUpgradesScreen.SetActive(false);
+                        ExitUpgrades();
                 }
             }
         }
@@ -132,6 +135,7 @@ public class GameController : MonoBehaviour {
                     scriptEnemy.enemyConfigs = chosenEnemyType;
                     scriptEnemy.enemyType = enemyType;
                     scriptEnemy.playerTransform = playerTransform;
+                    SoundController.GetInstance().objectsSounds.Add(enemy);    //Adicionando o inimigo criado como mais uma fonte de áudio
                     enemy.SetActive(true);
                     numEnemiesSpawned++;
                 }
@@ -149,6 +153,7 @@ public class GameController : MonoBehaviour {
     private void playerDeath() {
         playerTransform.gameObject.SetActive(false);
         gamePaused = true;
+        SoundController.GetInstance().PlaySound("explosion", playerTransform.gameObject);
         ParticleSystem particles = Instantiate(particlesDeathPlayer, playerTransform.position, Quaternion.identity);
         ParticleSystem.MainModule particlesMain = particles.main;
         Color colorParticles = playerTransform.GetComponent<MeshRenderer>().material.color;
@@ -180,13 +185,24 @@ public class GameController : MonoBehaviour {
 
     //Métodos ativados com botões:
     public void StartGame() {
+        SoundController.GetInstance().PlaySound("btn");
         TransitionController.GetInstance().LoadMainScene();
     }
     public void QuitGame() {
+        SoundController.GetInstance().PlaySound("btn");
+        StartCoroutine(delayQuit());
+    }
+    private IEnumerator delayQuit() {
+        yield return new WaitForSeconds(0.2f);
         Application.Quit();
     }
     public void Options() {
+        SoundController.GetInstance().PlaySound("btn");
         canvasOptions.SetActive(true);
+    }
+    public void ExitOptionsBtn() {
+        SoundController.GetInstance().PlaySound("btnExit");
+        ExitOptions();
     }
     public void ExitOptions() {
         canvasOptions.SetActive(false);
@@ -194,23 +210,35 @@ public class GameController : MonoBehaviour {
         updateConfigs();
     }
     public void Controls() {
+        SoundController.GetInstance().PlaySound("btn");
         canvasControls.SetActive(true);
+    }
+    public void ExitControlsBtn() {
+        SoundController.GetInstance().PlaySound("btnExit");
+        ExitControls();
     }
     public void ExitControls() {
         canvasControls.SetActive(false);
     }
     public void Upgrades() {
+        SoundController.GetInstance().PlaySound("btn");
         canvasUpgradesScreen.SetActive(true);
+    }
+    public void ExitUpgradesBtn() {
+        SoundController.GetInstance().PlaySound("btnExit");
+        ExitUpgrades();
     }
     public void ExitUpgrades() {
         canvasUpgradesScreen.SetActive(false);
     }
     public void ResumeGame() {
+        SoundController.GetInstance().PlaySound("btnExit");
         canvasPause.SetActive(false);
         canvasOptions.SetActive(false);
         gamePaused = false;
     }
     public void ReturnToMenu() {
+        SoundController.GetInstance().PlaySound("btn");
         TransitionController.GetInstance().LoadMenu();
     }
     public void BuyUpgrade(GameObject sectionUpgrade) {
@@ -238,15 +266,19 @@ public class GameController : MonoBehaviour {
                 enableSectionUpgrade(newSection);
             }
             Globals.numCoins -= requiredCoins;    //Diminuindo o número de moedas após a compra
+            SoundController.GetInstance().PlaySound("btnPurchase");
             updateCoins();
         }
-        else
-            Debug.Log("Sem moedas o suficiente!!!");
+        else {
+            SoundController.GetInstance().PlaySound("btnFailPurchase");
+            //Debug.Log("Sem moedas o suficiente!!!");
+        }
     }
     public void ChangeLanguage(int newIdLang) {
         updateLanguage(newIdLang);
     }
     public void ResetSave() {
+        SoundController.GetInstance().PlaySound("btn");
         Globals.ResetData();
     }
 
@@ -298,10 +330,10 @@ public class GameController : MonoBehaviour {
         }
     }
 
-    private void updateConfigs() {
+    private void updateConfigs(bool sceneStart=false) {
         if (camCinemachine != null)
             camCinemachine.m_XAxis.m_MaxSpeed = Globals.camSensitivity;
-        SoundController.GetInstance().ChangeVolumes();
+        SoundController.GetInstance().ChangeVolumes(sceneStart);
     }
 
     private void updateLanguage(int idLang) {

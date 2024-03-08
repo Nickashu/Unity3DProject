@@ -5,7 +5,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 using UnityEngine;
 
 public class Globals : MonoBehaviour {
-    public static int idLanguage = 0, numCoins=0, levelPistol=0, levelSMG=0, recordEnemiesDefeated=0, camSensitivity=100;
+    public static int idLanguage = 0, numCoins=0, levelPistol=0, levelSMG=0, recordEnemiesDefeated=0, camSensitivity=150;
     public static float volumeOST = 1, volumeSFX = 1, pistolDamageTax=1, SMGDamageTax=1;
     public static bool hasMisteryGun = false;
 
@@ -96,7 +96,7 @@ public class Globals : MonoBehaviour {
 
         formatter.Serialize(fileStream, data);
         fileStream.Close();
-        Debug.Log("Dados salvos com sucesso!");
+        //Debug.Log("Dados salvos com sucesso!");
     }
 
     public static void LoadData() {
@@ -119,7 +119,7 @@ public class Globals : MonoBehaviour {
             volumeSFX = data.volumeSFX;
             hasMisteryGun = data.hasMisteryGun;
 
-            Debug.Log("Dados carregados com sucesso!");
+            //Debug.Log("Dados carregados com sucesso!");
         }
     }
 
@@ -135,7 +135,7 @@ public class Globals : MonoBehaviour {
 
         SaveData();
         LoadData();
-        Debug.Log("Dados zerados com sucesso!");
+        //Debug.Log("Dados zerados com sucesso!");
         TransitionController.GetInstance().LoadMenu();
     }
 }

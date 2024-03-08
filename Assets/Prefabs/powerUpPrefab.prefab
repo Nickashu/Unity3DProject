@@ -110,7 +110,7 @@ GameObject:
   - component: {fileID: 7354592798305272861}
   - component: {fileID: 7155944272238096124}
   - component: {fileID: 1067176674247978340}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: powerUpPrefab
   m_TagString: powerUpPrefab
   m_Icon: {fileID: 0}

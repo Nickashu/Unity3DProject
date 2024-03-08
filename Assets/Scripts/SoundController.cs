@@ -8,21 +8,27 @@ public class SoundController : MonoBehaviour {   //Será uma classe Singleton
     private static SoundController instance;
 
     public Sound[] sounds;
+    public List<GameObject> objectsSounds;
+
     private Dictionary<string, bool> isPlayingOST = new Dictionary<string, bool> { { "OST_menu", false }, { "OST_level", false } };
-    private Dictionary<string, float> volumeOSTs = new Dictionary<string, float> { { "OST_menu", 1f }, { "OST_level", 1f } };
+    private Dictionary<string, float> originalVolumesOSTs = new Dictionary<string, float>();
+    private Dictionary<string, float> currentVolumesOSTs = new Dictionary<string, float>();
+    private Dictionary<string, float> originalVolumesSFXs = new Dictionary<string, float>();
+    private Dictionary<string, float> currentVolumesSFXs = new Dictionary<string, float>();
 
     public static SoundController GetInstance() {
         return instance;
     }
 
     private void Awake() {
+        DontDestroyOnLoad(gameObject);
         if (instance == null)
             instance = this;
         else
             Destroy(gameObject);
+    }
 
-        DontDestroyOnLoad(gameObject);
-
+    public void LoadSounds() {
         foreach (Sound s in sounds) {
             if (s.origins.Count() == 0) {   //Se o som não tiver origem especificada
                 s.audioSource = gameObject.AddComponent<AudioSource>();
@@ -31,7 +37,7 @@ public class SoundController : MonoBehaviour {   //Será uma classe Singleton
                 s.audioSource.volume = s.volume;
                 s.audioSource.pitch = s.pitch;
                 s.audioSource.loop = s.loop;
-                s.audioSource.playOnAwake = false;    //Sons que tocam logo no início serão adicionados diretamente aos seus gameObjects
+                s.audioSource.playOnAwake = false;
                 if (s.is3D) {
                     s.audioSource.spatialBlend = 1f;
                     s.audioSource.maxDistance = 25f;
@@ -41,30 +47,36 @@ public class SoundController : MonoBehaviour {   //Será uma classe Singleton
             }
             else {
                 foreach (GameObject go in s.origins) {
+                    GameObject obj = objectsSounds.Find(a => a.name == go.name);
+                    if(obj == null) 
+                        objectsSounds.Add(go);
                     s.audioSource = go.AddComponent<AudioSource>();
                     s.audioSource.clip = s.clip;
                     s.audioSource.clip.name = s.name;
                     s.audioSource.volume = s.volume;
                     s.audioSource.pitch = s.pitch;
                     s.audioSource.loop = s.loop;
-                    s.audioSource.playOnAwake = false;    //Sons que tocam logo no início serão adicionados diretamente aos seus gameObjects
+                    s.audioSource.playOnAwake = false;
                     if (s.is3D) {
-                        float minDistance = 3f, maxDistance = 25f;
-                        if (s.name.Contains("guarda")) {
-                            minDistance = 10f;
-                            maxDistance = 28f;
-                        }
                         s.audioSource.spatialBlend = 1f;
-                        s.audioSource.maxDistance = maxDistance;
-                        s.audioSource.minDistance = minDistance;
+                        s.audioSource.maxDistance = 25f;
+                        s.audioSource.minDistance = 3f;
                         s.audioSource.rolloffMode = AudioRolloffMode.Linear;
                     }
                 }
             }
+            if (s.isOST) {
+                currentVolumesOSTs[s.name] = s.volume;
+                originalVolumesOSTs[s.name] = s.volume;
+            }
+            else {
+                currentVolumesSFXs[s.name] = s.volume;
+                originalVolumesSFXs[s.name] = s.volume;
+            }
         }
     }
 
-    public void PlaySound(string soundName, GameObject go) {
+    public void PlaySound(string soundName, GameObject go=null) {
         Sound s = Array.Find(sounds, sound => sound.name.Equals(soundName));   //Procurando o som informado pelo seu nome
         if (s != null) {
             if (go != null) {
@@ -77,7 +89,6 @@ public class SoundController : MonoBehaviour {   //Será uma classe Singleton
                 else {
                     AudioSource[] audios = gameObject.GetComponents<AudioSource>();
                     audios.FirstOrDefault(a => a.clip.name.Equals(soundName)).Play();
-                    Debug.Log(soundName);
                 }
             }
         }
@@ -123,10 +134,11 @@ public class SoundController : MonoBehaviour {   //Será uma classe Singleton
 
     private IEnumerator FadeTrack(AudioSource oldOST, AudioSource newOST) {    //Esta co-rotina será usada para transiocionar entre uma música e outra
         float timeToFade = 1.25f, timeElapsed = 0;
-        float volumeNewOst = volumeOSTs[newOST.clip.name], volumeOldOST = 1;
+        float volumeNewOst = currentVolumesOSTs[newOST.clip.name], volumeOldOST = 1;
         if (oldOST != null)
-            volumeOldOST = volumeOSTs[oldOST.clip.name];
+            volumeOldOST = currentVolumesOSTs[oldOST.clip.name];
 
+        newOST.volume = 0;
         newOST.Play();
         while (timeElapsed < timeToFade) {
             if (oldOST != null)
@@ -169,13 +181,25 @@ public class SoundController : MonoBehaviour {   //Será uma classe Singleton
             currentTrack.Play();
         }
     }
-    public void ChangeVolumes() {
-        AudioSource[] audios = GetComponents<AudioSource>();
-        foreach (AudioSource audio in audios) {
-            if (audio.clip.name.Contains("OST"))
-                audio.volume = volumeOSTs[audio.clip.name] * Globals.volumeOST;
-            else
-                audio.volume = 1 * Globals.volumeSFX;
+    public void ChangeVolumes(bool sceneStart) {    //o parâmetro sceneStart é necessário para evitar que uma música comece com volume errado quando uma cena é carregada
+        List<AudioSource> allAudios = GetComponents<AudioSource>().ToList<AudioSource>();
+        foreach(GameObject obj in objectsSounds) {
+            AudioSource[] objAudios = obj.GetComponents<AudioSource>();
+            foreach(AudioSource a in objAudios) {
+                allAudios.Add(a);
+            }
+        }
+
+        foreach (AudioSource audio in allAudios) {
+            if (audio.clip.name.Contains("OST")) {
+                currentVolumesOSTs[audio.clip.name] = originalVolumesOSTs[audio.clip.name] * Globals.volumeOST;
+                if (!sceneStart)
+                    audio.volume = originalVolumesOSTs[audio.clip.name] * Globals.volumeOST;
+            }
+            else {
+                currentVolumesSFXs[audio.clip.name] = originalVolumesSFXs[audio.clip.name] * Globals.volumeSFX;
+                audio.volume = originalVolumesSFXs[audio.clip.name] * Globals.volumeSFX;
+            }
         }
     }
 }

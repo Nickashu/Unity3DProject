@@ -4,8 +4,8 @@ using UnityEngine;
 public class Sound {   //Essa classe representa cada som adicionado ao jogo
     public string name;
     public bool loop, is3D, isOST;
-    public GameObject[] origins;
     public AudioClip clip;
+    public GameObject[] origins;
 
     [Range(0f, 1f)]
     public float volume;

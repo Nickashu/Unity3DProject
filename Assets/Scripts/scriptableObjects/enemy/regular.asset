@@ -15,7 +15,7 @@ MonoBehaviour:
   rarity: 30
   type: 1
   health: 20
-  bulletDamage: 8
-  shotCooldown: 1
+  bulletDamage: 0
+  shotCooldown: 0.7
   speed: 10
   color: {r: 1, g: 0, b: 0.473217, a: 0}
