@@ -36,7 +36,7 @@ public class Globals : MonoBehaviour {
         {0, 5}, {1, 10}, {2, 25}
     };
     public static Dictionary<int, int> upgradePricesSMG = new Dictionary<int, int>() {
-        {0, 10}, {1, 10}, {2, 25}
+        {0, 5}, {1, 10}, {2, 25}
     };
     public static int priceMisteryGun = 100;
 

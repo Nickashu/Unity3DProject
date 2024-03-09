@@ -44,7 +44,25 @@ public class GameController : MonoBehaviour {
         updateCoins();   //Atualizando o texto do número de moedas
         updateLanguage(Globals.idLanguage);
         SoundController.GetInstance().LoadSounds();
-        updateConfigs(true);
+        SoundController.GetInstance().ChangeVolumes(true);
+
+        if (canvasOptions != null) {   //Se 1 slider estiver ativo, os outros também estarão
+            updateConfigs();
+            OSTVolumeSlider.value = Globals.volumeOST;
+            SFXVolumeSlider.value = Globals.volumeSFX;
+            sensitivitySlider.onValueChanged.AddListener((newValue) => {
+                camCinemachine.m_XAxis.m_MaxSpeed = Globals.camSensitivity;
+            });
+            OSTVolumeSlider.onValueChanged.AddListener((newValue) => {
+                Debug.Log(newValue);
+                Globals.volumeOST = newValue;
+                SoundController.GetInstance().ChangeVolumes(false);
+            });
+            SFXVolumeSlider.onValueChanged.AddListener((newValue) => {
+                Globals.volumeSFX = newValue;
+                SoundController.GetInstance().ChangeVolumes(false);
+            });
+        }
         TransitionController.GetInstance().playSceneMusic();
 
         if (SceneManager.GetActiveScene().name.ToLower().Contains("main")) {
@@ -56,21 +74,6 @@ public class GameController : MonoBehaviour {
         else if (SceneManager.GetActiveScene().name.ToLower().Contains("menu")) {
             isInMenuScene = true;
             manageUpgrades();
-        }
-
-        if (sensitivitySlider != null) {   //Se 1 slider estiver ativo, os outros também estarão
-            sensitivitySlider.value = Globals.camSensitivity;
-            OSTVolumeSlider.value = Globals.volumeOST;
-            SFXVolumeSlider.value = Globals.volumeSFX;
-            sensitivitySlider.onValueChanged.AddListener((newValue) => {
-                Globals.camSensitivity = (int)newValue;
-            });
-            OSTVolumeSlider.onValueChanged.AddListener((newValue) => {
-                Globals.volumeOST = newValue;
-            });
-            SFXVolumeSlider.onValueChanged.AddListener((newValue) => {
-                Globals.volumeSFX = newValue;
-            });
         }
     }
 
@@ -332,11 +335,9 @@ public class GameController : MonoBehaviour {
         }
     }
 
-    private void updateConfigs(bool sceneStart=false) {
+    private void updateConfigs() {
+        sensitivitySlider.value = Globals.camSensitivity;
         dropdownLanguage.value = Globals.idLanguage;
-        if (camCinemachine != null)
-            camCinemachine.m_XAxis.m_MaxSpeed = Globals.camSensitivity;
-        SoundController.GetInstance().ChangeVolumes(sceneStart);
     }
 
     private void updateLanguage(int idLang) {

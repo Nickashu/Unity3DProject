@@ -11,8 +11,8 @@ public class SoundController : MonoBehaviour {   //Será uma classe Singleton
     public List<GameObject> objectsSounds;
 
     private Dictionary<string, bool> isPlayingOST = new Dictionary<string, bool> { { "OST_menu", false }, { "OST_level", false } };
-    private Dictionary<string, float> originalVolumesOSTs = new Dictionary<string, float> { { "OST_menu", 0.6f }, { "OST_level", 0.25f } };
-    private Dictionary<string, float> currentVolumesOSTs = new Dictionary<string, float> { { "OST_menu", 0.6f }, { "OST_level", 0.25f } };
+    private Dictionary<string, float> originalVolumesOSTs = new Dictionary<string, float> { { "OST_menu", 0.6f }, { "OST_level", 0.2f } };
+    private Dictionary<string, float> currentVolumesOSTs = new Dictionary<string, float> { { "OST_menu", 0.6f }, { "OST_level", 0.2f } };
     private Dictionary<string, float> originalVolumesSFXs = new Dictionary<string, float>();
     private Dictionary<string, float> currentVolumesSFXs = new Dictionary<string, float>();
 
@@ -195,6 +195,8 @@ public class SoundController : MonoBehaviour {   //Será uma classe Singleton
                 currentVolumesSFXs[audio.clip.name] = originalVolumesSFXs[audio.clip.name] * Globals.volumeSFX;
                 audio.volume = originalVolumesSFXs[audio.clip.name] * Globals.volumeSFX;
             }
+            if (audio.volume <= 0.015)
+                audio.volume = 0;
         }
     }
 }
