@@ -120,7 +120,7 @@ public class Enemy : MonoBehaviour {
     }
 
     private void enemyDeath() {
-        int amountCoins = (enemyType + 1) * GameController.GetInstance().coinsMultiplier;    //Calculando o número de moedas que o jogador ganhou ao matar o inimigo
+        int amountCoins = (enemyType + 2) * GameController.GetInstance().coinsMultiplier;    //Calculando o número de moedas que o jogador ganhou ao matar o inimigo
         Globals.numCoins += amountCoins;
         GameController.GetInstance().updateCoins();
         GameController.GetInstance().numEnemiesSpawned--;

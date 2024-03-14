@@ -172,7 +172,7 @@ public class Player : MonoBehaviour {
     private void collectPowerUp(int powerUpType) {
         switch(powerUpType) {
             case (int)Globals.typesOfPowerUps.life:
-                currentHealth += 20f;
+                currentHealth += 30f;
                 updateHealthBar();
                 break;
             case (int)Globals.typesOfPowerUps.velocity:

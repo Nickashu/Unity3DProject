@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 35c6d07ba4a6f4449bc4023d24caf234, type: 3}
   m_Name: velocity
   m_EditorClassIdentifier: 
-  rarity: 30
+  rarity: 40
   type: 2
   color: {r: 0.13830544, g: 0.47435763, b: 0.7924528, a: 0}
   scale: {x: 1, y: 1, z: 1}

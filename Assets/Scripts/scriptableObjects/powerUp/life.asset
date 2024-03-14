@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 35c6d07ba4a6f4449bc4023d24caf234, type: 3}
   m_Name: life
   m_EditorClassIdentifier: 
-  rarity: 40
+  rarity: 50
   type: 0
   color: {r: 0.9764706, g: 0.2901961, b: 0.37254903, a: 0}
   scale: {x: 2, y: 2, z: 1}
